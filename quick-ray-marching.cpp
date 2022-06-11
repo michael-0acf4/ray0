@@ -48,7 +48,7 @@ vec3 sphereNormalAt (vec3 p) {
 
 float rayMarch (vec3 camera, vec3 cam_dir) {
 	float d_traveled = min_depth; // basically at the start of the screen, ie. 0
-	int steps = 255;
+	int steps = 200;
 	while (steps > 0) {
 		vec3 current_pos = add (camera, scaleReal(cam_dir, d_traveled));
 		float d = sdTotalScene (current_pos);
@@ -67,7 +67,7 @@ float sh = -height / 2, eh = height / 2;
 	for (float y = sh; y < eh; y++) {
 		for (float x = sx; x < ex; x++) {
 			// we define a direction for each pixel
-			vec3 camera {0., 0., 1.002}; // the camera must be above
+			vec3 camera {0., 0., 1.003}; // the camera must be above
 			vec3 cam_dir = normalize ({x, y, -1.});
 			
 			float d_traveled = rayMarch (camera, cam_dir);
