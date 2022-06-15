@@ -37,7 +37,9 @@ float sdTotalScene (vec3 p) {
 	return length(p) - radius;
 }
 
-// works only for the trivial case of a sphere
+// for ray marching the gradient at the contact point is orthogonal
+// to the surface
+// just an approximation of the gradient vector
 vec3 sceneNormalAt (vec3 p) {
   return normalize({
     sdTotalScene ({p.x + eps, p.y, p.z})  -  sdTotalScene ({p.x - eps, p.y, p.z}),
@@ -61,7 +63,7 @@ float rayMarch (vec3 camera, vec3 cam_dir) {
 }
 
 void draw (float elapsedTime = 1.) {
-float sh = -height / 2, eh = height / 2;
+	float sh = -height / 2, eh = height / 2;
 	float sx = -width / 2, ex = width / 2;
 	
 	for (float y = sh; y < eh; y++) {
