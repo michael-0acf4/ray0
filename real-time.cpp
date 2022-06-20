@@ -12,8 +12,8 @@ float min_depth = 0;
 float max_depth = 100;
 float radius = 1.;
 float eps = 0.0001;
-float width = 100;
-float height = 100;
+float width = 120;
+float height = 120;
 float gtime = 0;
 
 // core
@@ -74,9 +74,9 @@ void computeScreenBuffer (t_screen &screen) {
 			vec3 cam_dir = normalize ({x, y, -1.});
 			
 			float d_traveled = rayMarch (camera, cam_dir);
-			float diffuse = 0.1;
+			float diffuse = 0.01;
 			if (d_traveled <= max_depth) {
-				// hits the scene i.e. the sphere
+				// hits the scene
 				// with light				
 				vec3 contact_point = add (camera, scaleReal(cam_dir, d_traveled));
 				vec3 contact_normal = sceneNormalAt (contact_point);
@@ -87,7 +87,7 @@ void computeScreenBuffer (t_screen &screen) {
 				diffuse = dot (light_dir, contact_normal);				
 			}
 
-			char pixel = screen.computeColorGivenDiffuseLight(diffuse, COLOR_STRONG);
+			char pixel = screen.computeColorGivenDiffuseLight(diffuse, COLOR_LIGHT);
 
 			// texture coords ---> screen coords
 			// -0.5  0.5     ---> -width/2 width/2

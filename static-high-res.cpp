@@ -72,7 +72,7 @@ void computeScreenBuffer (t_screen &screen) {
 			float d_traveled = rayMarch (camera, cam_dir);
 			float diffuse = 0.1; // background light
 			if (d_traveled <= max_depth) {
-				// hits the scene i.e. the sphere
+				// hits the scene
 				// with light				
 				vec3 contact_point = add (camera, scaleReal(cam_dir, d_traveled));
 				vec3 contact_normal = sceneNormalAt (contact_point);

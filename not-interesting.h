@@ -10,7 +10,7 @@
 #define EPSILON 0.00001f
 
 // dark ---> bright
-const char *COLOR_STRONG = "@@@@@@@@@@%%%%%%%%#########*********++++++++===:::...    ";
+const char *COLOR_STRONG = "@@@@@@@@@@%%%%%%%%#########*********++++++++===:::...  ";
 const char *COLOR_LIGHT = "******+++===----:::::::::::...... ";
 
 // not very interesting
@@ -22,11 +22,13 @@ struct vec3 {
 
 // I know it looks ugly
 struct mat4 {
+
 	float m00, m01, m02, m03,
 		m10, m11, m12, m13,
 		m20, m21, m22, m23,
 		m30, m31, m32, m33;
-	mat4 (float m00, float m01, float m02, float m03,
+	
+    mat4 (float m00, float m01, float m02, float m03,
 		float m10, float m11, float m12, float m13,
 		float m20, float m21, float m22, float m23,
 		float m30, float m31, float m32, float m33) :
@@ -54,8 +56,12 @@ struct t_screen {
 
     char computeColorGivenDiffuseLight (float light, const char *palette = COLOR_LIGHT) {
         float len = (float) strlen (palette);
-        int index = std::min (std::max (0, (int) (light * len)), (int) len - 1);
-        return palette[(int) len -  index - 1];
+        int index = std::min (
+            std::max (0, (int) (light * len)),
+            (int) (len - 1)
+        );
+        // reverse
+        return palette[(int) len - index - 1];
     }
 
 	void put (int y, int x, char pixel) {
@@ -66,18 +72,14 @@ struct t_screen {
 	
 	void show () {
 		for (int i = 0; i < (int) height; i++) {
-			for (int j = 0; j < (int) width; j++)
-				std::cout << pixels[i][j];
+			for (int j = 0; j < (int) width; std::cout << pixels[i][j], j++);
 			std::cout << '\n';
 		}
 	}
 	
 	void clear () {
-		for (int i = 0; i < (int) height; i++) {
-			for (int j = 0; j < (int) width; j++)
-				pixels[i][j] = ' ';
-		}
-
+		for (int i = 0; i < (int) height; i++)
+			for (int j = 0; j < (int) width; pixels[i][j] = ' ', j++);
 		#ifdef _WIN32
 			system("cls");
 		#else
@@ -88,9 +90,13 @@ struct t_screen {
 };
 
 inline float length (vec3 a) { return (float) sqrt(a.x*a.x + a.y*a.y + a.z*a.z); }
+
 inline vec3 scaleReal (vec3 a, float k) { return {a.x * k, a.y * k, a.z * k}; }
+
 inline vec3 add (vec3 a, vec3 b) { return {a.x + b.x, a.y + b.y, a.z + b.z}; }
+
 inline vec3 sub (vec3 a, vec3 b) { return add(a, scaleReal(b, -1.)); }
+
 inline float dot (vec3 a, vec3 b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
 
 vec3 normalize (vec3 a) {
@@ -110,10 +116,10 @@ vec3 applyTransf (mat4 m, vec3 v) {
 	return res;
 }
 
-
+// basic transformations
 mat4 rotateY (float t) {
-    float ct = std::cos(t);
-    float st = std::sin(t);
+    float ct = std::cos (t);
+    float st = std::sin (t);
     return mat4 (
         ct, 0, st, 0,
          0, 1,  0, 0,
@@ -150,7 +156,7 @@ inline float sdSphere (vec3 p, float radius) {
 }
 
 inline float sdBox (vec3 p, vec3 b) {
-	return length(vec3( // vmax
+	return length (vec3( // vmax
 		(float) std::max(fabs(p.x) - b.x, 0.),
 		(float) std::max(fabs(p.y) - b.y, 0.),
 		(float) std::max(fabs(p.z) - b.z, 0.)
