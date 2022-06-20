@@ -1,7 +1,11 @@
 sample:
-	g++ -std=c++14 quick-ray-marching.cpp -o ./bin/a0
+	g++ -std=c++14 quick-sketch.cpp -o ./bin/a0
 	./bin/a0
 
 cmp:
-	g++ -std=c++14 quick-ray-marching-complex.cpp -o ./bin/a1
+	g++ -std=c++14 real-time.cpp -o ./bin/a1
 	./bin/a1
+
+hi:
+	g++ -std=c++14 static-high-res.cpp -o ./bin/a2
+	./bin/a2

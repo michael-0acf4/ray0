@@ -2,32 +2,14 @@
 #include <cmath>
 #include <cstring>
 
-float min_depth = 0;
-float max_depth = 100;
+#include "not-interesting.h"
+
+float min_depth = 0.;
+float max_depth = 100.;
 float radius = 1.;
-float eps = 0.0001;
 float width = 50;
 float height = 35;
 const char *color = "******+++===----:::......  "; // dark ---> bright
-
-// not very interesting ---
-struct vec3 {
-	float x; float y; float z;
-	vec3 (float x, float y, float z) : x(x), y(y), z(z) {}
-};
-inline float length (vec3 a) { return (float) sqrt(a.x*a.x + a.y*a.y + a.z*a.z); }
-inline vec3 scaleReal (vec3 a, float k) { return {a.x * k, a.y * k, a.z * k}; }
-inline vec3 add (vec3 a, vec3 b) { return {a.x + b.x, a.y + b.y, a.z + b.z}; }
-inline vec3 sub (vec3 a, vec3 b) { return add(a, scaleReal(b, -1.)); }
-inline float dot (vec3 a, vec3 b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
-vec3 normalize (vec3 a) {
-	float L = length(a); 
-	if (L <= eps) return {0., 0., 0.};
-	return {a.x / L, a.y / L, a.z / L};
-}
-// end ----
-
-
 
 
 // core
@@ -38,13 +20,13 @@ float sdTotalScene (vec3 p) {
 }
 
 // for ray marching the gradient at the contact point is orthogonal
-// to the surface
-// just an approximation of the gradient vector
+// to the contact surface
+// let's approximate the gradient vector with that information
 vec3 sceneNormalAt (vec3 p) {
   return normalize({
-    sdTotalScene ({p.x + eps, p.y, p.z})  -  sdTotalScene ({p.x - eps, p.y, p.z}),
-    sdTotalScene ({p.x, p.y + eps, p.z})  -  sdTotalScene ({p.x, p.y - eps, p.z}),
-    sdTotalScene ({p.x, p.y, p.z  + eps}) -  sdTotalScene ({p.x, p.y, p.z - eps})
+    sdTotalScene ({p.x + EPSILON, p.y, p.z})  - sdTotalScene ({p.x - EPSILON, p.y, p.z}),
+    sdTotalScene ({p.x, p.y + EPSILON, p.z})  - sdTotalScene ({p.x, p.y - EPSILON, p.z}),
+    sdTotalScene ({p.x, p.y, p.z  + EPSILON}) - sdTotalScene ({p.x, p.y, p.z - EPSILON})
   });
 }
 
@@ -55,7 +37,7 @@ float rayMarch (vec3 camera, vec3 cam_dir) {
 		vec3 current_pos = add (camera, scaleReal(cam_dir, d_traveled));
 		float d = sdTotalScene (current_pos);
 		d_traveled += d;
-		if (d < eps) break;
+		if (d < EPSILON) break;
 		if (d_traveled > max_depth) break;
 		steps--;
 	}
@@ -99,10 +81,5 @@ void draw (float elapsedTime = 1.) {
 
 int main () {
 	draw();
-	// float dt = 0.01, elapsedTime = 0;
-	// while (true) {
-		// draw (elapsedTime);
-		// elapsedTime += dt;
-	// }
 	return 0;
 }
