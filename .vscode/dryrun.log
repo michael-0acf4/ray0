@@ -1,6 +1,0 @@
-make.exe --dry-run --keep-going --print-directory
-make.exe: entrant dans le r�pertoire � d:/Dev-projects/cpp-and-clang/Quick-Ray-Marching �
-g++ -std=c++14 quick-sketch.cpp -o ./bin/a0
-./bin/a0
-make.exe: quittant le r�pertoire � d:/Dev-projects/cpp-and-clang/Quick-Ray-Marching �
- 
