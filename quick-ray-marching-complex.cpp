@@ -11,8 +11,8 @@ float min_depth = 0;
 float max_depth = 100;
 float radius = 1.;
 float eps = 0.0001;
-float width = 50;
-float height = 25;
+float width = 100;
+float height = 100;
 float aspect_ratio = width / height;
 const char *color = "******+++===----:::......  "; // dark ---> bright
 float gtime = 0;
@@ -106,10 +106,7 @@ vec3 applyTransf (mat4 m, vec3 v) {
 // end ----
 
 
-
-
 // core
-
 // distance function for the scene
 // let's try a sphere at (0, 0, 0)
 // shapes
@@ -118,15 +115,15 @@ float sdSphere (vec3 p, float radius) {
 }
 
 float sdBox (vec3 p, vec3 b) {
-	vec3 vmax {
+	vec3 vmax (
 		(float) std::max(fabs(p.x) - b.x, 0.),
 		(float) std::max(fabs(p.y) - b.y, 0.),
 		(float) std::max(fabs(p.z) - b.z, 0.)
-	};
+	);
 	return length(vmax);
 }
 
-float sdTorus(vec3 p, float tx, float ty) {
+float sdTorus (vec3 p, float tx, float ty) {
   float ax = sqrt(p.x*p.x + p.z*p.z) - tx,
 		by = p.y;
   return sqrt(ax*ax + by*by) - ty;
@@ -147,18 +144,18 @@ float sdDiff (float distA, float distB) {
 mat4 rotateY (float t) {
     float ct = std::cos(t);
     float st = std::sin(t);
-    return mat4 {
+    return mat4 (
         ct, 0, st, 0,
          0, 1,  0, 0,
        -st, 0, ct, 0,
          0, 0, 0, 1
-    };
+	);
 }
 
-mat4 rotateZ(float t) {
-    float ct = std::cos(t);
-    float st = std::sin(t);
-    return mat4(
+mat4 rotateZ (float t) {
+    float ct = std::cos (t);
+    float st = std::sin (t);
+    return mat4 (
         ct, -st, 0, 0,
         st, ct, 0, 0,
         0, 0, 1, 0,
@@ -166,10 +163,10 @@ mat4 rotateZ(float t) {
     );
 }
 
-mat4 rotateX(float t) {
-    float ct = std::cos(t);
-    float st = std::sin(t);
-    return mat4(
+mat4 rotateX (float t) {
+    float ct = std::cos (t);
+    float st = std::sin (t);
+    return mat4 (
         1, 0, 0, 0,
         0, ct, -st, 0,
         0, st, ct, 0,
@@ -181,7 +178,14 @@ float sdTotalScene (vec3 p) {
     vec3 transf_p = applyTransf (rotateY(-gtime), p);
     transf_p = applyTransf (rotateX(-gtime), transf_p);
     transf_p = applyTransf (rotateZ(-gtime), transf_p);
-    return sdSphere(transf_p, 1.);
+    // return sdTorus(transf_p, 1, 0.5);
+    return sdDiff( 
+        sdUnion(
+            sdSphere(transf_p, 0.25),
+            sdDiff(sdBox(transf_p, vec3(0.8, 0.8, 0.8)), sdSphere(transf_p, 1.))
+        ),
+        sdTorus(transf_p, 1, 0.5)
+    );
 }
 
 // for ray marching the gradient at the contact point is orthogonal
@@ -189,9 +193,9 @@ float sdTotalScene (vec3 p) {
 // just an approximation of the gradient vector
 vec3 sceneNormalAt (vec3 p) {
   return normalize({
-    sdTotalScene ({p.x + eps, p.y, p.z}) -  sdTotalScene ({p.x - eps, p.y, p.z}),
-    sdTotalScene ({p.x, p.y + eps, p.z}) -  sdTotalScene ({p.x, p.y - eps, p.z}),
-    sdTotalScene ({p.x, p.y, p.z + eps}) -  sdTotalScene ({p.x, p.y, p.z - eps})
+    sdTotalScene ({p.x + eps, p.y, p.z}) - sdTotalScene ({p.x - eps, p.y, p.z}),
+    sdTotalScene ({p.x, p.y + eps, p.z}) - sdTotalScene ({p.x, p.y - eps, p.z}),
+    sdTotalScene ({p.x, p.y, p.z + eps}) - sdTotalScene ({p.x, p.y, p.z - eps})
   });
 }
 
@@ -211,19 +215,20 @@ float rayMarch (vec3 camera, vec3 cam_dir) {
 
 void computeScreenBuffer (t_screen &screen) {
 	// motivation, the bigger the screensize, the more the steps
-	float dp = 1 / std::max(height, width); // we can also assign an arbitrary step
+	float dp = 0.01 ; // 1 / std::max(height, width); // we can also assign an arbitrary step
 	
 	// normalized coordinates centered at (0., 0.)
-	float sy = -width / 2, ey = width / 2;
-	float sx = -height / 2, ex = height / 2;
+	float sy = -0.5, ey = 0.5;
+	float sx = -0.5, ex = 0.5;
 	float ratio = width / height;
-	// sx *= ratio; // fix the ratio of the x component accordingly
+	sx *= ratio;
+	sy *= ratio;
 	
 	// iterate through the texture coordinate
-	for (float y = sy; y < ey; y += 1) {
-		for (float x = sx; x < ex; x += 1) {
+	for (float y = sy; y < ey; y += dp) {
+		for (float x = sx; x < ex; x += dp) {
 			// we define a direction for each pixel
-			vec3 camera {0., 0., 1.006}; // the camera must be above
+			vec3 camera {0., 0., 5.}; // the camera must be above
 			vec3 cam_dir = normalize ({x, y, -1.});
 			
 			float d_traveled = rayMarch (camera, cam_dir);
@@ -244,7 +249,7 @@ void computeScreenBuffer (t_screen &screen) {
 
 				// color
 				float len = (float) strlen(color);		
-				pixel = color[(int) (diffuse * len)];
+				pixel = color[std::max(0, (int) (diffuse * len))];
 			}
 
 			// std::cout << pixel;
@@ -252,11 +257,10 @@ void computeScreenBuffer (t_screen &screen) {
 			// transform the texture coordinate to a real screen coordinate
 			// -0.5, 0.5 ---> -width/2 width/2
 			// -0.5, 0.5 ---> -height/2 height/2
-			// int real_x = (int) (x / width),
-				// real_y = (int) (y / height);
-			screen.put (y + height / 2, x + width / 2, pixel);
+			int screen_x = (int) ((x + 0.5) * width),
+				screen_y = (int) ((y + 0.5) * height);
+			screen.put (screen_y, screen_x, pixel);
 		}
-		// std::cout << '\n';
 	}
 }
 
@@ -266,8 +270,8 @@ int main () {
 	float dt = 0.1;
 	while (true) {
 		computeScreenBuffer (screen);
-		screen.show();
-		screen.clear();
+		screen.show ();
+		screen.clear ();
 		gtime += dt;
 	}
 	return 0;
