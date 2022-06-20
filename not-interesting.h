@@ -10,11 +10,10 @@
 #define EPSILON 0.00001f
 
 // dark ---> bright
-const char *COLOR_STRONG = "@@@@@@@@@@%%%%%%%%#########*********++++++++======...   ";
-const char *COLOR_LIGHT = "******+++===----::::::...... ";
+const char *COLOR_STRONG = "@@@@@@@@@@%%%%%%%%#########*********++++++++===:::...    ";
+const char *COLOR_LIGHT = "******+++===----:::::::::::...... ";
 
 // not very interesting
-
 struct vec3 {
 	float x; float y; float z;
 	vec3 (float x, float y, float z) : x(x), y(y), z(z) {}
@@ -96,7 +95,7 @@ inline float dot (vec3 a, vec3 b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
 
 vec3 normalize (vec3 a) {
 	float L = length(a); 
-	if (L <= 10e-6) return {0., 0., 0.};
+	if (L <= EPSILON) return {0., 0., 0.};
 	return {a.x / L, a.y / L, a.z / L};
 }
 
@@ -146,33 +145,32 @@ mat4 rotateX (float t) {
 }
 
 // shapes
-float sdSphere (vec3 p, float radius) {
+inline float sdSphere (vec3 p, float radius) {
     return length(p) - radius;
 }
 
-float sdBox (vec3 p, vec3 b) {
-	vec3 vmax (
+inline float sdBox (vec3 p, vec3 b) {
+	return length(vec3( // vmax
 		(float) std::max(fabs(p.x) - b.x, 0.),
 		(float) std::max(fabs(p.y) - b.y, 0.),
 		(float) std::max(fabs(p.z) - b.z, 0.)
-	);
-	return length(vmax);
+	));
 }
 
-float sdTorus (vec3 p, float tx, float ty) {
-  float ax = sqrt(p.x*p.x + p.z*p.z) - tx,
-		by = p.y;
-  return sqrt(ax*ax + by*by) - ty;
+inline float sdTorus (vec3 p, float tx, float ty) {
+    return -ty + sqrt (
+        p.y*p.y + std::pow(sqrt(p.x*p.x + p.z*p.z) - tx, 2)
+    );
 }
 
-float sdUnion (float distA, float distB) {
-    return std::min(distA, distB);
+inline float sdUnion (float distA, float distB) {
+    return std::min (distA, distB);
 }
 
-float sdInter (float distA, float distB) {
-    return std::max(distA, distB);
+inline float sdInter (float distA, float distB) {
+    return std::max (distA, distB);
 }
 
-float sdDiff (float distA, float distB) {
-    return std::max(distA, -distB);
+inline float sdDiff (float distA, float distB) {
+    return std::max (distA, -distB);
 }

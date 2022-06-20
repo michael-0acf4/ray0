@@ -8,7 +8,7 @@ make.exe all --print-data-base --no-builtin-variables --no-builtin-rules --quest
 # Ce logiciel est construit pour i386-pc-mingw32
  
 
-# Base de donn�es de Make, imprim�e le Mon Jun 20 21:26:14 2022
+# Base de donn�es de Make, imprim�e le Mon Jun 20 22:02:55 2022
 
 # Variables
 
@@ -203,7 +203,7 @@ USERDOMAIN_ROAMINGPROFILE = DESKTOP-F749FKM
 
 # C:\Windows\System32\WindowsPowerShell\v1.0\ (p�riph�rique C:/Windows/System32/WindowsPowerShell/v1.0/, mtime 1655488739): 33 fichiers, non impossibilit�s.
 # C:\Windows\System32\Wbem (p�riph�rique C:/Windows/System32/Wbem, mtime 1655488739): 156 fichiers, non impossibilit�s.
-# . (p�riph�rique d:/Dev-projects/cpp-and-clang/Quick-Ray-Marching, mtime 1655749516): 14 fichiers, non impossibilit�s.
+# . (p�riph�rique d:/Dev-projects/cpp-and-clang/Quick-Ray-Marching, mtime 1655751676): 14 fichiers, non impossibilit�s.
 # C:\Program Files\PostgreSQL\13\bin (p�riph�rique C:/Program Files/PostgreSQL/13/bin, mtime 1655473088): 69 fichiers, non impossibilit�s.
 # D:\Soft-Binaries\cabal-install-3.6.0.0-x86_64-windows (p�riph�rique D:/Soft-Binaries/cabal-install-3.6.0.0-x86_64-windows, mtime 1655486632): 3 fichiers, non impossibilit�s.
 # C:\Program Files\CodeBlocks\MinGW\bin (p�riph�rique C:/Program Files/CodeBlocks/MinGW/bin, mtime 1655411034): 58 fichiers, non impossibilit�s.
@@ -238,11 +238,10 @@ me 1655409291): 8 fichiers, non impossibilit�s.
 
 hi:
 #  Recherche de r�gle implicite n'a pas �t� effectu�e.
-#  Heure de modification jamais v 
-�rifi�e.
+#  Heure de modification jamais v�rifi�e.
 #  Fichier n'a pas �t� mis � jour.
 #  commandes � ex�cuter (de � makefile �, ligne 10):
-	g++ -std=c++14 static-quick-ray-marching-high-res.cpp -o ./bin/a2
+	g++ -std=c++14 static-high-res.cpp -o ./bin/a2
 	./bin/a2
 	
 
@@ -257,8 +256,8 @@ all:
 
 # Pas une cible :
 .DEFAULT:
-#  Recherche d 
-e r�gle implicite n'a pas �t� effectu�e.
+#  Recherche de r�gle implicite n 
+'a pas �t� effectu�e.
 #  Heure de modification jamais v�rifi�e.
 #  Fichier n'a pas �t� mis � jour.
 
@@ -267,14 +266,14 @@ cmp:
 #  Heure de modification jamais v�rifi�e.
 #  Fichier n'a pas �t� mis � jour.
 #  commandes � ex�cuter (de � makefile �, ligne 6):
-	g++ -std=c++14 quick-ray-marching-complex.cpp -o ./bin/a1
+	g++ -std=c++14 real-time.cpp -o ./bin/a1
 	./bin/a1
 	
 
 # Pas une cible :
 makefile:
 #  Recherche de r�gle implicite effectu�e.
-#  Derni�re modification 2022-06-20 21:25:53
+#  Derni�re modification 2022-06-20 22:01:53
 #  Fichier a �t� mis � jour.
 #  Mise � jour r�ussie
 # variables initialis�es dans les statistiques de table de hachage:
@@ -290,9 +289,9 @@ sample:
 #  Recherche de r�gle implicite n'a pas �t� effectu�e.
 #  Heure de modification jamais v�rifi�e.
 #  Fichier n'a pas �t� mis � jour.
-#  commandes � ex�cuter (de � makefile �, ligne  
-2):
-	g++ -std=c++14 quick-ray-marching.cpp -o ./bin/a0
+#  commandes � ex�cuter (de � makefile �, ligne 2):
+	g++ -std=c++14 quick-sketch.cpp 
+ -o ./bin/a0
 	./bin/a0
 	
 
@@ -309,7 +308,7 @@ sample:
 # strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
 # strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# Fin de la base de donn�es de Make le Mon Jun 20 21:26:14 2022
+# Fin de la base de donn�es de Make le Mon Jun 20 22:02:55 2022
 
  
 make.exe: *** Pas de r�gle pour fabriquer la cible � all �. Arr�t.
