@@ -8,7 +8,7 @@ make.exe all --print-data-base --no-builtin-variables --no-builtin-rules --quest
 # Ce logiciel est construit pour i386-pc-mingw32
  
 
-# Base de donn�es de Make, imprim�e le Mon Jun 20 18:35:15 2022
+# Base de donn�es de Make, imprim�e le Mon Jun 20 18:37:19 2022
 
 # Variables
 
@@ -33,7 +33,8 @@ HOMEDRIVE = C:
 # automatique
 ^D = $(patsubst %/,%,$(dir $^))
 # makefile
-CURDIR := d:/Dev-projects/cpp-and-clang/Quick-Ray-Marching
+CURDIR := d:/Dev-projects/ 
+cpp-and-clang/Quick-Ray-Marching
 # d�faut
 SHELL := sh.exe
 # environnement
@@ -191,7 +192,8 @@ VSCODE_PID = 17644
 # environnement
 USERDOMAIN_ROAMINGPROFILE = DESKTOP-F749FKM
 # variables initialis�es dans les statistiques de table de hachage:
-# Charge=89/1024=9%, Refait le hachage=0, Collisions=9/109=8%
+# Charge=89/1024=9%, Refait le hachage=0, Collisions=9/109= 
+8%
 
 # Valeurs de variable avec mod�le sp�cifique
 
@@ -201,7 +203,7 @@ USERDOMAIN_ROAMINGPROFILE = DESKTOP-F749FKM
 
 # C:\Windows\System32\WindowsPowerShell\v1.0\ (p�riph�rique C:/Windows/System32/WindowsPowerShell/v1.0/, mtime 1655488739): 33 fichiers, non impossibilit�s.
 # C:\Windows\System32\Wbem (p�riph�rique C:/Windows/System32/Wbem, mtime 1655488739): 156 fichiers, non impossibilit�s.
-# . (p�riph�rique d:/Dev-projects/cpp-and-clang/Quick-Ray-Marching, mtime 1655739314): 10 fichiers, non impossibilit�s.
+# . (p�riph�rique d:/Dev-projects/cpp-and-clang/Quick-Ray-Marching, mtime 1655739402): 11 fichiers, non impossibilit�s.
 # C:\Program Files\PostgreSQL\13\bin (p�riph�rique C:/Program Files/PostgreSQL/13/bin, mtime 1655473088): 69 fichiers, non impossibilit�s.
 # D:\Soft-Binaries\cabal-install-3.6.0.0-x86_64-windows (p�riph�rique D:/Soft-Binaries/cabal-install-3.6.0.0-x86_64-windows, mtime 1655486632): 3 fichiers, non impossibilit�s.
 # C:\Program Files\CodeBlocks\MinGW\bin (p�riph�rique C:/Program Files/CodeBlocks/MinGW/bin, mtime 1655411034): 58 fichiers, non impossibilit�s.
@@ -221,11 +223,12 @@ USERDOMAIN_ROAMINGPROFILE = DESKTOP-F749FKM
 # D:\ITU University\UwAmp_3.0.2\bin\database\mysql-5.6.20\bin (p�riph�rique D:/ITU University/UwAmp_3.0.2/bin/database/mysql-5.6.20/bin, mtime 1408479220): 8 fichiers, non impossibilit�s.
 # C:\Users\U1\AppData\Local\GitHubDesktop\bin (p�riph�rique C:/Users/U1/AppData/Local/GitHubDesktop/bin, mtime 1655409502): 4 fichiers, non impossibilit�s.
 # C:\Users\U1\AppData\Local\Microsoft\WindowsApps (p�riph�rique C:/Users/U1/AppData/Local/Microsoft/WindowsApps, mtime 1655663267): 19 fichiers, non impossibilit�s.
-# C:\Program Files\Git\cmd (p�riph�rique C:/Program Files/Git/cmd, mtime 1655409291): 8 fichiers, non impossibilit�s.
+# C:\Program Files\Git\cmd (p�riph�rique C:/Program Files/Git/cmd, mti 
+me 1655409291): 8 fichiers, non impossibilit�s.
 # C:\Windows\system32 (p�riph�rique C:/Windows/system32, mtime 1655712237): 2912 fichiers, non impossibilit�s.
 # C:\Program Files (x86)\GnuWin32\bin (p�riph�rique C:/Program Files (x86)/GnuWin32/bin, mtime 1655739187): 5 fichiers, non impossibilit�s.
 
-# 3624 fichiers, non impossibilit�s dans 25 r�pertoires.
+# 3625 fichiers, non impossibilit�s dans 25 r�pertoires.
 
 # R�gles Implicites
 
@@ -236,10 +239,7 @@ USERDOMAIN_ROAMINGPROFILE = DESKTOP-F749FKM
 # Pas une cible :
 all:
 #  Cible provenant de la ligne de commande.
-#  Recherche de r�gle imp 
-make.exe: *** Pas de r�gle pour fabriquer la cible � all �. Arr�t.
-
-licite effectu�e.
+#  Recherche de r�gle implicite effectu�e.
 # Fichier inexistant.
 #  Fichier n'a pas �t� mis � jour.
 # variables initialis�es dans les statistiques de table de hachage:
@@ -255,14 +255,16 @@ cmp:
 #  Recherche de r�gle implicite n'a pas �t� effectu�e.
 #  Heure de modification jamais v�rifi�e.
 #  Fichier n'a pas �t� mis � jour.
-#  commandes � ex�cuter (de � makefile �, ligne 5):
-	g++ -std=c++14 quick-ray-marching-complex.cpp -o a1.exe
+#  commandes  
+� ex�cuter (de � makefile �, ligne 6):
+	g++ -std=c++14 quick-ray-marching-complex.cpp -o ./bin/a1
+	./bin/a1
 	
 
 # Pas une cible :
 makefile:
 #  Recherche de r�gle implicite effectu�e.
-#  Derni�re modification 2022-06-20 18:29:00
+#  Derni�re modification 2022-06-20 18:36:15
 #  Fichier a �t� mis � jour.
 #  Mise � jour r�ussie
 # variables initialis�es dans les statistiques de table de hachage:
@@ -279,7 +281,8 @@ sample:
 #  Heure de modification jamais v�rifi�e.
 #  Fichier n'a pas �t� mis � jour.
 #  commandes � ex�cuter (de � makefile �, ligne 2):
-	g++ -std=c++14 quick-ray-marching.cpp -o a0.exe
+	g++ -std=c++14 quick-ray-marching.cpp -o ./bin/a0
+	./bin/a0
 	
 
 # statistiques des fichiers de la table de hachage:
@@ -288,13 +291,16 @@ sample:
 
 # Pas de chemins de recherche � vpath �.
 
-# Pas de chemin de recherche g�n�ral (variable � VPATH �).
+# Pas de chemin d 
+make.exe: *** Pas de r�gle pour fabriquer la cible � all �. Arr�t.
+
+e recherche g�n�ral (variable � VPATH �).
 
 # # of strings in strcache: 1
 # # of strcache buffers: 1
 # strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
 # strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# Fin de la base de donn�es de Make le Mon Jun 20 18:35:15 2022
+# Fin de la base de donn�es de Make le Mon Jun 20 18:37:19 2022
 
  

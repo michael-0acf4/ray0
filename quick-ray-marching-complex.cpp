@@ -42,37 +42,45 @@ struct mat4 {
 
 struct t_screen {
 	float width, height;
-	std::vector<std::string> pixels;
+	std::vector<std::vector<char>> pixels;
 	t_screen (float w, float h) {
 		this->width = w;
 		this->height = h;
 		for (int i = 0; i < (int) height; i++) {
-			pixels[i] = "dsad";
-			// for (int j = 0; j < (int) width; j++)
-				// pixels[i] += "X";
+			std::vector<char> row;
+			for (int j = 0; j < (int) width; j++)
+				row.push_back (' ');
+			pixels.push_back (row);
 		}
+	}
+
+	void put (int y, int x, char pixel) {
+		if (x < 0 || x >= (int) width || y >= (int) height || y < 0)
+			return;
+		pixels[y][x] = pixel;
 	}
 	
 	void show () {
 		for (int i = 0; i < (int) height; i++) {
-			std::cout << pixels[i] << '\n';
+			for (int j = 0; j < (int) width; j++)
+				std::cout << pixels[i][j];
+			std::cout << '\n';
 		}
 	}
 	
 	void clear () {
 		for (int i = 0; i < (int) height; i++) {
-			pixels[i] = "";
 			for (int j = 0; j < (int) width; j++)
-				pixels[i] += ' ';
+				pixels[i][j] = ' ';
 		}
+
 		#ifdef _WIN32
-			// system("cls");
+			system("cls");
 		#else
-			// system("clear");
+			system("clear");
 		#endif
 	}
-	
-	
+
 };
 
 inline float length (vec3 a) { return (float) sqrt(a.x*a.x + a.y*a.y + a.z*a.z); }
@@ -206,14 +214,14 @@ void computeScreenBuffer (t_screen &screen) {
 	float dp = 1 / std::max(height, width); // we can also assign an arbitrary step
 	
 	// normalized coordinates centered at (0., 0.)
-	float sy = -0.5, ey = 0.5;
-	float sx = -0.5, ex = 0.5;
+	float sy = -width / 2, ey = width / 2;
+	float sx = -height / 2, ex = height / 2;
 	float ratio = width / height;
-	sx *= ratio; // fix the ratio of the x component accordingly
+	// sx *= ratio; // fix the ratio of the x component accordingly
 	
 	// iterate through the texture coordinate
-	for (float y = sy; y < ey; y += dp) {
-		for (float x = sx; x < ex; x += dp) {
+	for (float y = sy; y < ey; y += 1) {
+		for (float x = sx; x < ex; x += 1) {
 			// we define a direction for each pixel
 			vec3 camera {0., 0., 1.006}; // the camera must be above
 			vec3 cam_dir = normalize ({x, y, -1.});
@@ -238,25 +246,28 @@ void computeScreenBuffer (t_screen &screen) {
 				float len = (float) strlen(color);		
 				pixel = color[(int) (diffuse * len)];
 			}
+
+			// std::cout << pixel;
 			
 			// transform the texture coordinate to a real screen coordinate
-			int real_x = (int) ((x + 0.5) * width),
-				real_y = (int) ((y + 0.5) * height);
-			screen.pixels[real_x][real_y] = pixel;
+			// -0.5, 0.5 ---> -width/2 width/2
+			// -0.5, 0.5 ---> -height/2 height/2
+			// int real_x = (int) (x / width),
+				// real_y = (int) (y / height);
+			screen.put (y + height / 2, x + width / 2, pixel);
 		}
+		// std::cout << '\n';
 	}
 }
 
 int main () {
 	t_screen screen (width, height);
-	screen.show();
 	// computeScreenBuffer (screen);
 	float dt = 0.1;
 	while (true) {
-		// computeScreenBuffer (screen);
-		// screen.show();
-		// screen.clear();
-		
+		computeScreenBuffer (screen);
+		screen.show();
+		screen.clear();
 		gtime += dt;
 	}
 	return 0;
