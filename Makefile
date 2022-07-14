@@ -11,5 +11,5 @@ hi:
 	./bin/a2
 
 bl:
-	g++ -std=c++14 blackhole.cpp -o ./bin/a3
+	g++ -std=c++14 blackhole-high-res.cpp -o ./bin/a3
 	./bin/a3
