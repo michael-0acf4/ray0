@@ -9,3 +9,7 @@ cmp:
 hi:
 	g++ -std=c++14 static-high-res.cpp -o ./bin/a2
 	./bin/a2
+
+bl:
+	g++ -std=c++14 blackhole.cpp -o ./bin/a3
+	./bin/a3

@@ -99,6 +99,22 @@ inline vec3 sub (vec3 a, vec3 b) { return add(a, scaleReal(b, -1.)); }
 
 inline float dot (vec3 a, vec3 b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
 
+vec3 v_max (vec3 a, vec3 b) {
+	return {
+		std::max(a.x, b.x),
+		std::max(a.y, b.y),
+		std::max(a.z, b.z)
+	};
+}
+
+vec3 v_min (vec3 a, vec3 b) {
+	return {
+		std::min(a.x, b.x),
+		std::min(a.y, b.y),
+		std::min(a.z, b.z)
+	};
+}
+
 vec3 normalize (vec3 a) {
 	float L = length(a); 
 	if (L <= EPSILON) return {0., 0., 0.};
@@ -179,4 +195,29 @@ inline float sdInter (float distA, float distB) {
 
 inline float sdDiff (float distA, float distB) {
     return std::max (distA, -distB);
+}
+
+vec3 lerp3 (vec3 colorone, vec3 colortwo, float value) {
+	return add (
+		colorone,
+		scaleReal (sub(colortwo, colorone), value)
+	);
+}
+
+float lerp (float colorone, float colortwo, float value) {
+	return lerp3 (vec3(colorone, 0., 0.), vec3(colortwo, 0., 0.), value).x;
+}
+
+float clamp (float value, float min, float max) {
+	return std::max (min, std::min(max, value));
+}
+
+float sdRoundedCylinder (vec3 p, float ra, float rb, float h) {
+    vec3 d = vec3(length({p.x, 0., p.z}) - 2.0 * ra + rb, fabs(p.y) - h, 0.);
+    return std::min(std::max(d.x, d.y), 0.f) + length(v_max(d, {0., 0., 0.})) - rb;
+}
+
+float sdSmoothSubtraction (float d1, float d2, float k) {
+    float h = clamp(0.5 - 0.5 * (d2 + d1) / k, 0.0, 1.0);
+    return lerp(d2, -d1, h) + k * h * (1.0 - h);
 }
