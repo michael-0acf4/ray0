@@ -8,22 +8,24 @@
 
 #include "not-interesting.h"
 
-float width = 150;
-float height = 100;
+float width = 80;
+float height = 50;
 
 // black hole configuration
 const float RS = .125; // singularity radius
 const float PS_RAD = 1.5 * RS; // photon sphere radius
 const float ACC_RAD = 3. * RS; // accretion disc radius
 
+float gtime = .1;
+
 // ray marching configuration
 const float MAX_DEPTH = 100.;
-const int MAX_STEPS = 400;
+const int MAX_STEPS = 300;
 const float DP = 0.05;
 
 // core
 float sdAccretionDisc (vec3 p) {
-    p = applyTransf(rotateX(0.3), p); 
+    p = applyTransf(rotateX(-std::sin((PI / 3.) * 3.2)), p); 
     float p1 = sdRoundedCylinder(p, ACC_RAD, ACC_RAD / 6, .001);
     float p2 = sdSphere(p, ACC_RAD);
     return sdSmoothSubtraction(p2, p1, .5);
@@ -53,6 +55,14 @@ vec3 bendLightDirection (vec3 bl_pos, vec3 ray_pos, vec3 ray_dir) {
     return normalize(lerp3(u, v, lerp_val));
 }
 
+float normalizedNoiseTexture (float x, float y) {
+	// noise-ish texture... just like a normalized chess board
+	int sx = (int) (x * 10.f);
+	int sy = (int) (y * 10.f);
+	if ((sx + sy) % 2 == 0) return 0.;
+	return 1.;
+}
+
 void computeScreenBuffer (t_screen &screen) {
 	// motivation : the bigger the screensize, the more the steps
 	float dp = 1 / std::max(height, width); // we can also assign an arbitrary step
@@ -72,7 +82,7 @@ void computeScreenBuffer (t_screen &screen) {
 			vec3 cam_dir = normalize ({x, y, -1.});
 
 			// ray marching
-			float dtravel = 0.; // basically at the start of the screen, ie. 0
+			float dtravel = 0.05; // basically at the start of the screen, ie. 0
 			
 			vec3 bl_pos(0., 0., 0.);
 			vec3 ray_pos = camera;
@@ -106,8 +116,19 @@ void computeScreenBuffer (t_screen &screen) {
 				// make it glow more as it approaches the center
 				float glow = .3 / std::pow(length(delta), 2.); // create glow and diminish it with distance
 				glow = clamp(glow, 0., 1.); // remove artifacts
-				
-				diffuse += glow;
+
+
+				// rotation effect
+				float rot_vel = 3.;
+				float s = std::sin(gtime * rot_vel), c = std::cos(gtime * rot_vel);
+				float tuv_x = ray_pos.x;
+				float tuv_y = ray_pos.z;
+				float rot_x = c * tuv_x - s * tuv_y;
+				float rot_y = s * tuv_x + c * tuv_y;
+				float tex_color = normalizedNoiseTexture (rot_x, rot_y);
+
+				// total color
+				diffuse += glow * tex_color;
 			}
 			
 			// end ray marching
@@ -126,7 +147,15 @@ void computeScreenBuffer (t_screen &screen) {
 
 int main () {
 	t_screen screen (width, height);
-	computeScreenBuffer (screen);
-	screen.show ();
+	screen.clear();
+	while (true) {
+		screen.saveCursor ();
+		// std::cout << "t=" << gtime << "\n";
+		computeScreenBuffer (screen);
+		screen.show ();
+		screen.restoreCursor ();
+
+		gtime += .1;
+	}
 	return 0;
 }

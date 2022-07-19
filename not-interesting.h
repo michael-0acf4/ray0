@@ -8,6 +8,7 @@
 
 #define PI 3.1415
 #define EPSILON 0.00001f
+#define BIG_EPSILON 0.01f
 
 // dark ---> bright
 const char *COLOR_STRONG = "@@@@@@@@@@%%%%%%%%#########*********++++++++===:::...  ";
@@ -75,6 +76,14 @@ struct t_screen {
 			for (int j = 0; j < (int) width; std::cout << pixels[i][j], j++);
 			std::cout << '\n';
 		}
+	}
+
+	void saveCursor () {
+		std::cout << "\033[s";
+	}
+
+	void restoreCursor () {
+		std::cout << "\033[u";
 	}
 	
 	void clear () {
