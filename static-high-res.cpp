@@ -4,7 +4,6 @@
 #include <ctime>
 #include <chrono>
 #include <thread>
-#include <vector>
 
 #include "not-interesting.h"
 

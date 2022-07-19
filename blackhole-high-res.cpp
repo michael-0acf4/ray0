@@ -4,13 +4,12 @@
 #include <ctime>
 #include <chrono>
 #include <thread>
-#include <vector>
 
 #include "not-interesting.h"
 
 // 150x80
-float width = 150;
-float height = 80;
+float width = 130;
+float height = 60;
 
 // black hole configuration
 const float RS = .125; // singularity radius
@@ -27,6 +26,7 @@ const float DP = 0.05;
 // core
 float sdAccretionDisc (vec3 p) {
     p = applyTransf(rotateX(-std::sin((PI / 3.) * 3.2)), p); 
+    p = applyTransf(rotateZ(-std::sin((PI / 3.) * 3.2)), p); 
     float p1 = sdRoundedCylinder(p, ACC_RAD, ACC_RAD / 6, .001);
     float p2 = sdSphere(p, ACC_RAD);
     return sdSmoothSubtraction(p2, p1, .5);
@@ -60,7 +60,7 @@ float normalizedNoiseTexture (float x, float y) {
 	// noise-ish texture... just like a normalized chess board
 	int sx = (int) (x * 10.f);
 	int sy = (int) (y * 30.f);
-	if ((sx + sy) % 2 == 0) return 0.6;
+	if ((sx + sy) % 2 == 0) return 0.7;
 	return 1.;
 }
 
@@ -120,12 +120,12 @@ void computeScreenBuffer (t_screen &screen) {
 
 
 				// rotation effect
-				// the noise-ish texture is normalized and have fixed values
+				// the noise-ish texture is normalized and have deterministic values
 				// rotate the uv coordinate
 				float rot_vel = 3.;
 				float s = std::sin(gtime * rot_vel), c = std::cos(gtime * rot_vel);
-				float tuv_x = ray_pos.x;
-				float tuv_y = ray_pos.y;
+				float tuv_x = ray_pos.y;
+				float tuv_y = ray_pos.z;
 				float rot_x = c * tuv_x - s * tuv_y;
 				float rot_y = s * tuv_x + c * tuv_y;
 
@@ -159,7 +159,7 @@ int main () {
 		screen.show ();
 		screen.restoreCursor ();
 
-		gtime += .1;
+		gtime += .2;
 	}
 	return 0;
 }

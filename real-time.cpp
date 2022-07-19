@@ -13,7 +13,7 @@ float max_depth = 100;
 float radius = 1.;
 float eps = 0.0001;
 float width = 120;
-float height = 120;
+float height = 80;
 float gtime = 0;
 
 // core
@@ -102,11 +102,13 @@ void computeScreenBuffer (t_screen &screen) {
 int main () {
 	t_screen screen (width, height);
 	float dt = 0.1;
+	screen.clear ();
 	while (true) {
+		screen.saveCursor ();
 		computeScreenBuffer (screen);
 		screen.show ();
-		screen.clear ();
 		gtime += dt;
+		screen.restoreCursor ();
 	}
 	return 0;
 }
