@@ -8,8 +8,9 @@
 
 #include "not-interesting.h"
 
-float width = 80;
-float height = 50;
+// 150x80
+float width = 150;
+float height = 80;
 
 // black hole configuration
 const float RS = .125; // singularity radius
@@ -58,8 +59,8 @@ vec3 bendLightDirection (vec3 bl_pos, vec3 ray_pos, vec3 ray_dir) {
 float normalizedNoiseTexture (float x, float y) {
 	// noise-ish texture... just like a normalized chess board
 	int sx = (int) (x * 10.f);
-	int sy = (int) (y * 10.f);
-	if ((sx + sy) % 2 == 0) return 0.;
+	int sy = (int) (y * 30.f);
+	if ((sx + sy) % 2 == 0) return 0.6;
 	return 1.;
 }
 
@@ -119,12 +120,15 @@ void computeScreenBuffer (t_screen &screen) {
 
 
 				// rotation effect
+				// the noise-ish texture is normalized and have fixed values
+				// rotate the uv coordinate
 				float rot_vel = 3.;
 				float s = std::sin(gtime * rot_vel), c = std::cos(gtime * rot_vel);
 				float tuv_x = ray_pos.x;
-				float tuv_y = ray_pos.z;
+				float tuv_y = ray_pos.y;
 				float rot_x = c * tuv_x - s * tuv_y;
 				float rot_y = s * tuv_x + c * tuv_y;
+
 				float tex_color = normalizedNoiseTexture (rot_x, rot_y);
 
 				// total color
