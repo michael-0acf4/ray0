@@ -73,7 +73,7 @@ float gridTexture (float coord_x, float coord_y) {
     // return min(1.0, step (gx + gy, .1));
     
     // row col
-    return std::min(1.0f, step (gx, 0.1f) + step(gy, 0.1f));
+    return std::min(1.0f, step (gx, 0.1f) + step (gy, 0.1f));
 }
 
 void computeScreenBuffer (t_screen &screen) {
@@ -149,8 +149,8 @@ void computeScreenBuffer (t_screen &screen) {
 
 			// background space deformation
 			if (length(vec3(x, y, 0.)) >= PS_RAD) {
-	            float back_col = gridTexture(ray_pos.x / 5., ray_pos.y / 5.);
-	            diffuse += clamp(back_col, 0., .05);
+				float back_col = gridTexture(ray_pos.x / 5., ray_pos.y / 5.);
+				diffuse += clamp(back_col, 0., .5);
 			}
 
 			// end ray marching
@@ -161,7 +161,7 @@ void computeScreenBuffer (t_screen &screen) {
 			// -0.5  0.5     ---> -width/2 width/2
 			// -0.5  0.5     ---> -height/2 height/2
 			int screen_x = (int) ((x + 0.5) * width),
-				screen_y = (int) ((y + 0.5) * height);
+			    screen_y = (int) ((y + 0.5) * height);
 			screen.put (screen_y, screen_x, pixel);
 		}
 	}
