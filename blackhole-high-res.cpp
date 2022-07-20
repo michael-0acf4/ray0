@@ -59,16 +59,8 @@ float normalizedNoiseTexture (float x, float y) {
 	// noise-ish texture... just like a normalized chess board
 	int sx = (int) (x * 10.f);
 	int sy = (int) (y * 30.f);
-	if ((sx + sy) % 2 == 0) return 0.7;
+	if ((sx + sy) % 2 == 0) return 0.3;
 	return 1.;
-}
-
-float spaceTexture (float x, float y) {
-	// noise-ish texture... just like a normalized chess board
-	int sx = (int) (x * 100.f);
-	int sy = (int) (y * 100.f);
-	if ((sx + sy) % 2 == 0) return 0.7;
-	return 1.;	
 }
 
 // coord is uv normalized !
