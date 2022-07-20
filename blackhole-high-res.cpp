@@ -7,9 +7,8 @@
 
 #include "not-interesting.h"
 
-// 150x80
-float width = 130;
-float height = 60;
+float width = 160;
+float height = 100;
 
 // black hole configuration
 const float RS = .125; // singularity radius
@@ -20,7 +19,7 @@ float gtime = .1;
 
 // ray marching configuration
 const float MAX_DEPTH = 100.;
-const int MAX_STEPS = 300;
+const int MAX_STEPS = 280;
 const float DP = 0.05;
 
 // core
@@ -64,9 +63,30 @@ float normalizedNoiseTexture (float x, float y) {
 	return 1.;
 }
 
+float spaceTexture (float x, float y) {
+	// noise-ish texture... just like a normalized chess board
+	int sx = (int) (x * 100.f);
+	int sy = (int) (y * 100.f);
+	if ((sx + sy) % 2 == 0) return 0.7;
+	return 1.;	
+}
+
+// coord is uv normalized !
+float gridTexture (float coord_x, float coord_y) {
+    float scale = 3.;
+	float dp = gtime / 5.;
+    float gx = fixed_fmod((coord_x + dp) * scale, .5f);
+    float gy = fixed_fmod(coord_y * scale, .5f);
+    // dot
+    // return min(1.0, step (gx + gy, .1));
+    
+    // row col
+    return std::min(1.0f, step (gx, 0.1f) + step(gy, 0.1f));
+}
+
 void computeScreenBuffer (t_screen &screen) {
 	// motivation : the bigger the screensize, the more the steps
-	float dp = 1 / std::max(height, width); // we can also assign an arbitrary step
+	float dp = 1.f / std::max(height, width); // we can also assign an arbitrary step
 	
 	// normalized coordinates centered at (0., 0.)
 	float sy = -0.5, ey = 0.5;
@@ -79,7 +99,7 @@ void computeScreenBuffer (t_screen &screen) {
 	for (float y = sy; y < ey; y += dp) {
 		for (float x = sx; x < ex; x += dp) {
 			// we define a direction for each pixel
-			vec3 camera {0., 0., 2.01}; // the camera must be above
+			vec3 camera {0., 0., 2.}; // the camera must be above
 			vec3 cam_dir = normalize ({x, y, -1.});
 
 			// ray marching
@@ -105,14 +125,14 @@ void computeScreenBuffer (t_screen &screen) {
 			}
 
 			// base color
-			float diffuse = 0.05;
+			float diffuse = 0.;
 
 			// just after the photon sphere
 			if (length(vec3(x, y, 0.)) < PS_RAD)
 				diffuse = 0.;
 
 			// construct the accretion disk and the photon sphere
-			if (dtravel <= MAX_DEPTH) {
+			if (dtravel < MAX_DEPTH) {
 				vec3 delta = sub(ray_pos, bl_pos);
 				// make it glow more as it approaches the center
 				float glow = .3 / std::pow(length(delta), 2.); // create glow and diminish it with distance
@@ -134,7 +154,13 @@ void computeScreenBuffer (t_screen &screen) {
 				// total color
 				diffuse += glow * tex_color;
 			}
-			
+
+			// background space deformation
+			if (length(vec3(x, y, 0.)) >= PS_RAD) {
+	            float back_col = gridTexture(ray_pos.x / 5., ray_pos.y / 5.);
+	            diffuse += clamp(back_col, 0., .05);
+			}
+
 			// end ray marching
 
 			char pixel = screen.computeColorGivenDiffuseLight(diffuse, COLOR_STRONG);
