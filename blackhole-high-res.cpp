@@ -202,8 +202,9 @@ int main () {
 		screen.restoreCursor ();
 		gtime += .2;
 
+		// attempt 60fps
     	using namespace std::literals::chrono_literals;
-		std::this_thread::sleep_for(100ms);
+		std::this_thread::sleep_for(16ms);
 	}
 	return 0;
 }

@@ -3,7 +3,7 @@
 #include <cstring>
 #include <ctime>
 #include <chrono>
-#include <thread>
+
 #include <vector>
 
 #include "not-interesting.h"
@@ -11,7 +11,7 @@
 float min_depth = 0;
 float max_depth = 100;
 float radius = 1.;
-float eps = 0.0001;
+float eps = 0.01;
 float width = 120;
 float height = 80;
 float gtime = 0;
@@ -42,6 +42,10 @@ vec3 sceneNormalAt (vec3 p) {
   });
 }
 
+// unlike the blackhole
+// there is no need for a thread per fragment
+// in this particular implementation of ray marching
+
 float rayMarch (vec3 camera, vec3 cam_dir) {
 	float d_traveled = min_depth; // basically at the start of the screen, ie. 0
 	int steps = 200;
@@ -56,7 +60,7 @@ float rayMarch (vec3 camera, vec3 cam_dir) {
 	return d_traveled;
 }
 
-void computeScreenBuffer (t_screen &screen) {
+void computeScreenBuffer (t_screen *screen) {
 	// motivation, the bigger the screensize, the more the steps
 	float dp = 1 / std::max(height, width); // we can also assign an arbitrary step
 	
@@ -86,28 +90,32 @@ void computeScreenBuffer (t_screen &screen) {
 				diffuse = dot (light_dir, contact_normal);				
 			}
 
-			char pixel = screen.computeColorGivenDiffuseLight(diffuse, COLOR_LIGHT);
+			char pixel = screen->computeColorGivenDiffuseLight(diffuse, COLOR_LIGHT);
 
 			// texture coords ---> screen coords
 			// -0.5  0.5     ---> -width/2 width/2
 			// -0.5  0.5     ---> -height/2 height/2
 			int screen_x = (int) ((x + 0.5) * width),
 				screen_y = (int) ((y + 0.5) * height);
-			screen.put (screen_y, screen_x, pixel);
+			screen->put (screen_y, screen_x, pixel);
 		}
 	}
 }
 
 int main () {
 	t_screen screen (width, height);
-	float dt = 0.1;
 	screen.clear ();
+
 	while (true) {
 		screen.saveCursor ();
-		computeScreenBuffer (screen);
+		computeScreenBuffer (&screen);
 		screen.show ();
-		gtime += dt;
+		gtime += .1f;
 		screen.restoreCursor ();
+
+		// attempt 60fps
+		using namespace std::literals::chrono_literals;
+		std::this_thread::sleep_for(16ms);
 	}
 	return 0;
 }
