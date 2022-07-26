@@ -7,8 +7,11 @@
 
 #include "not-interesting.h"
 
-float width = 160;
-float height = 100;
+// use a thread for each fragment
+#define USE_THREAD 1
+
+float width = 130;
+float height = 80;
 
 // black hole configuration
 const float RS = .125; // singularity radius
@@ -19,7 +22,7 @@ float gtime = .1;
 
 // ray marching configuration
 const float MAX_DEPTH = 100.;
-const int MAX_STEPS = 280;
+const int MAX_STEPS = 300;
 const float DP = 0.05;
 
 // core
@@ -76,7 +79,83 @@ float gridTexture (float coord_x, float coord_y) {
     return std::min(1.0f, step (gx, 0.1f) + step (gy, 0.1f));
 }
 
-void computeScreenBuffer (t_screen &screen) {
+void fragmentHandler (float x, float y, t_screen *screen) {
+	// we define a direction for each pixel
+	vec3 camera {0., 0., 2.}; // the camera must be above
+	vec3 cam_dir = normalize ({x, y, -1.});
+
+	// ray marching
+	float dtravel = 0.05; // basically at the start of the screen, ie. 0
+	
+	vec3 bl_pos(0., 0., 0.);
+	vec3 ray_pos = camera;
+	vec3 ray_dir = cam_dir;
+	
+	for (int i = 0; i < MAX_STEPS; i++) {
+		// usual SDF
+		// ray_pos = add(ray_pos, scaleReal(cam_dir, DP)); // or just don't change the value of ray_dir
+		
+		// bending the SDF
+		ray_dir = bendLightDirection (bl_pos, ray_pos, ray_dir);
+		ray_pos = add(ray_pos, scaleReal(ray_dir, DP));
+		
+		float d = sdAccretionDisc (ray_pos);
+		dtravel += d;
+		
+		if (d < EPSILON) break;
+		if (d > MAX_DEPTH) break;
+	}
+
+	// base color
+	float diffuse = 0.;
+
+	// just after the photon sphere
+	if (length(vec3(x, y, 0.)) < PS_RAD)
+		diffuse = 0.;
+
+	// construct the accretion disk and the photon sphere
+	if (dtravel < MAX_DEPTH) {
+		vec3 delta = sub(ray_pos, bl_pos);
+		// make it glow more as it approaches the center
+		float glow = .3 / std::pow(length(delta), 2.); // create glow and diminish it with distance
+		glow = clamp(glow, 0., 1.); // remove artifacts
+
+
+		// rotation effect
+		// the noise-ish texture is normalized and have deterministic values
+		// rotate the uv coordinate
+		float rot_vel = 3.;
+		float s = std::sin(gtime * rot_vel), c = std::cos(gtime * rot_vel);
+		float tuv_x = ray_pos.y;
+		float tuv_y = ray_pos.z;
+		float rot_x = c * tuv_x - s * tuv_y;
+		float rot_y = s * tuv_x + c * tuv_y;
+
+		float tex_color = normalizedNoiseTexture (rot_x, rot_y);
+
+		// total color
+		diffuse += glow * tex_color;
+	}
+
+	// background space deformation
+	if (length(vec3(x, y, 0.)) >= PS_RAD) {
+		float back_col = gridTexture(ray_pos.x / 5., ray_pos.y / 5.);
+		diffuse += clamp(back_col, 0., .2);
+	}
+
+	// end ray marching
+
+	char pixel = screen->computeColorGivenDiffuseLight(diffuse, COLOR_STRONG);
+
+	// texture coords ---> screen coords
+	// -0.5  0.5     ---> -width/2 width/2
+	// -0.5  0.5     ---> -height/2 height/2
+	int screen_x = (int) ((x + 0.5) * width),
+		screen_y = (int) ((y + 0.5) * height);
+	screen->put (screen_y, screen_x, pixel);
+}
+
+void computeScreenBufferConcurrent (t_screen *screen) {
 	// motivation : the bigger the screensize, the more the steps
 	float dp = 1.f / std::max(height, width); // we can also assign an arbitrary step
 	
@@ -84,100 +163,47 @@ void computeScreenBuffer (t_screen &screen) {
 	float sy = -0.5, ey = 0.5;
 	float sx = -0.5, ex = 0.5;
 	float ratio = width / height;
-	sx *= ratio;
-	sy *= ratio;
 	
 	// iterate through the texture coordinate
+
+	std::vector<std::thread> frag_workers;
 	for (float y = sy; y < ey; y += dp) {
 		for (float x = sx; x < ex; x += dp) {
-			// we define a direction for each pixel
-			vec3 camera {0., 0., 2.}; // the camera must be above
-			vec3 cam_dir = normalize ({x, y, -1.});
-
-			// ray marching
-			float dtravel = 0.05; // basically at the start of the screen, ie. 0
-			
-			vec3 bl_pos(0., 0., 0.);
-			vec3 ray_pos = camera;
-			vec3 ray_dir = cam_dir;
-			
-			for (int i = 0; i < MAX_STEPS; i++) {
-				// usual SDF
-				// ray_pos = add(ray_pos, scaleReal(cam_dir, DP)); // or just don't change the value of ray_dir
-				
-				// bending the SDF
-				ray_dir = bendLightDirection (bl_pos, ray_pos, ray_dir);
-				ray_pos = add(ray_pos, scaleReal(ray_dir, DP));
-				
-				float d = sdAccretionDisc (ray_pos);
-				dtravel += d;
-				
-				if (d < EPSILON) break;
-				if (d > MAX_DEPTH) break;
-			}
-
-			// base color
-			float diffuse = 0.;
-
-			// just after the photon sphere
-			if (length(vec3(x, y, 0.)) < PS_RAD)
-				diffuse = 0.;
-
-			// construct the accretion disk and the photon sphere
-			if (dtravel < MAX_DEPTH) {
-				vec3 delta = sub(ray_pos, bl_pos);
-				// make it glow more as it approaches the center
-				float glow = .3 / std::pow(length(delta), 2.); // create glow and diminish it with distance
-				glow = clamp(glow, 0., 1.); // remove artifacts
-
-
-				// rotation effect
-				// the noise-ish texture is normalized and have deterministic values
-				// rotate the uv coordinate
-				float rot_vel = 3.;
-				float s = std::sin(gtime * rot_vel), c = std::cos(gtime * rot_vel);
-				float tuv_x = ray_pos.y;
-				float tuv_y = ray_pos.z;
-				float rot_x = c * tuv_x - s * tuv_y;
-				float rot_y = s * tuv_x + c * tuv_y;
-
-				float tex_color = normalizedNoiseTexture (rot_x, rot_y);
-
-				// total color
-				diffuse += glow * tex_color;
-			}
-
-			// background space deformation
-			if (length(vec3(x, y, 0.)) >= PS_RAD) {
-				float back_col = gridTexture(ray_pos.x / 5., ray_pos.y / 5.);
-				diffuse += clamp(back_col, 0., .5);
-			}
-
-			// end ray marching
-
-			char pixel = screen.computeColorGivenDiffuseLight(diffuse, COLOR_STRONG);
-
-			// texture coords ---> screen coords
-			// -0.5  0.5     ---> -width/2 width/2
-			// -0.5  0.5     ---> -height/2 height/2
-			int screen_x = (int) ((x + 0.5) * width),
-			    screen_y = (int) ((y + 0.5) * height);
-			screen.put (screen_y, screen_x, pixel);
+			#if USE_THREAD == 1
+				std::thread worker (fragmentHandler, x, y * ratio, screen);
+				frag_workers.push_back (std::move(worker));
+			#else
+				fragmentHandler (x * ratio, y * ratio, screen);
+			#endif
 		}
 	}
+
+	#if USE_THREAD == 1
+		// for each subtask, sync with the main thread i.e. wait for all threads to terminate
+		for (auto & worker : frag_workers)
+			worker.join();
+	#endif
 }
 
 int main () {
 	t_screen screen (width, height);
 	screen.clear();
+	
+	#if USE_THREAD == 1
+		std::cout << "/!\\ Preparing " << (width * height) << " parallel tasks\n";
+	#else
+		std::cout << "No threads ? :(";
+	#endif
+
 	while (true) {
 		screen.saveCursor ();
-		// std::cout << "t=" << gtime << "\n";
-		computeScreenBuffer (screen);
+		computeScreenBufferConcurrent (&screen);
 		screen.show ();
 		screen.restoreCursor ();
-
 		gtime += .2;
+
+    	using namespace std::literals::chrono_literals;
+		std::this_thread::sleep_for(100ms);
 	}
 	return 0;
 }

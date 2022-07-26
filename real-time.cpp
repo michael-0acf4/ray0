@@ -64,7 +64,6 @@ void computeScreenBuffer (t_screen &screen) {
 	float sy = -0.5, ey = 0.5;
 	float sx = -0.5, ex = 0.5;
 	float ratio = width / height;
-	sx *= ratio;
 	
 	// iterate through the texture coordinate
 	for (float y = sy; y < ey; y += dp) {

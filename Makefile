@@ -14,3 +14,6 @@ hi:
 
 bl:
 	$(call compile_all, blackhole-high-res.cpp, ./bin/a3)
+
+sandb:
+	$(call compile_all, ./sandbox/main.cpp, ./bin/a4)
