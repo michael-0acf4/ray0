@@ -182,9 +182,9 @@ inline float sdSphere (vec3 p, float radius) {
 
 inline float sdBox (vec3 p, vec3 b) {
 	return length (vec3( // vmax
-		(float) std::max(fabs(p.x) - b.x, 0.),
-		(float) std::max(fabs(p.y) - b.y, 0.),
-		(float) std::max(fabs(p.z) - b.z, 0.)
+		(float) std::max(fabs(p.x) - b.x, 0.f),
+		(float) std::max(fabs(p.y) - b.y, 0.f),
+		(float) std::max(fabs(p.z) - b.z, 0.f)
 	));
 }
 
