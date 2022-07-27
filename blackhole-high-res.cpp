@@ -190,7 +190,7 @@ int main () {
 	screen.clear();
 	
 	#if USE_THREAD == 1
-		std::cout << "/!\\ Preparing " << (width * height) << " parallel tasks\n";
+		std::cout << "/!\\ Preparing ~" << pow(std::max(height, width), 2.f) << " parallel tasks\n";
 	#else
 		std::cout << "No threads ? :(";
 	#endif
