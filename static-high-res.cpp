@@ -32,11 +32,11 @@ float sdTotalScene (vec3 p) {
 // to the contact surface
 // let's approximate the gradient vector with that information
 vec3 sceneNormalAt (vec3 p) {
-  return normalize({
-	sdTotalScene ({p.x + EPSILON, p.y, p.z}) - sdTotalScene ({p.x - EPSILON, p.y, p.z}),
-	sdTotalScene ({p.x, p.y + EPSILON, p.z}) - sdTotalScene ({p.x, p.y - EPSILON, p.z}),
-	sdTotalScene ({p.x, p.y, p.z + EPSILON}) - sdTotalScene ({p.x, p.y, p.z - EPSILON})
-  });
+	return normalize({
+		sdTotalScene ({p.x + EPSILON, p.y, p.z}) - sdTotalScene ({p.x - EPSILON, p.y, p.z}),
+		sdTotalScene ({p.x, p.y + EPSILON, p.z}) - sdTotalScene ({p.x, p.y - EPSILON, p.z}),
+		sdTotalScene ({p.x, p.y, p.z + EPSILON}) - sdTotalScene ({p.x, p.y, p.z - EPSILON})
+	});
 }
 
 float rayMarch (vec3 camera, vec3 cam_dir) {
@@ -85,8 +85,8 @@ void computeScreenBuffer (t_screen &screen) {
 			char pixel = screen.computeColorGivenDiffuseLight(diffuse, COLOR_STRONG);
 
 			// texture coords ---> screen coords
-			// -0.5  0.5	 ---> -width/2 width/2
-			// -0.5  0.5	 ---> -height/2 height/2
+			// -0.5	0.5	 ---> -width/2 width/2
+			// -0.5	0.5	 ---> -height/2 height/2
 			int screen_x = (int) ((x + 0.5) * width),
 				screen_y = (int) ((y + 0.5) * height);
 			screen.put (screen_y, screen_x, pixel);

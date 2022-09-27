@@ -23,11 +23,11 @@ float sdTotalScene (vec3 p) {
 // to the contact surface
 // let's approximate the gradient vector with that information
 vec3 sceneNormalAt (vec3 p) {
-  return normalize({
-	sdTotalScene ({p.x + EPSILON, p.y, p.z})  - sdTotalScene ({p.x - EPSILON, p.y, p.z}),
-	sdTotalScene ({p.x, p.y + EPSILON, p.z})  - sdTotalScene ({p.x, p.y - EPSILON, p.z}),
-	sdTotalScene ({p.x, p.y, p.z  + EPSILON}) - sdTotalScene ({p.x, p.y, p.z - EPSILON})
-  });
+	return normalize({
+		sdTotalScene ({p.x + EPSILON, p.y, p.z})  - sdTotalScene ({p.x - EPSILON, p.y, p.z}),
+		sdTotalScene ({p.x, p.y + EPSILON, p.z})  - sdTotalScene ({p.x, p.y - EPSILON, p.z}),
+		sdTotalScene ({p.x, p.y, p.z  + EPSILON}) - sdTotalScene ({p.x, p.y, p.z - EPSILON})
+	});
 }
 
 float rayMarch (vec3 camera, vec3 cam_dir) {
