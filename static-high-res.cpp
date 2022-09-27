@@ -16,16 +16,16 @@ float height = 120;
 
 // core
 float sdTotalScene (vec3 p) {
-    vec3 transf_p = applyTransf (rotateX(-PI / 6), p);
-    	 transf_p = applyTransf (rotateY(-PI / 2.5), transf_p);
-    // return sdTorus(transf_p, 1, 0.5);
-    return sdDiff( 
-        sdUnion(
-            sdSphere(transf_p, 0.5),
-            sdDiff(sdBox(transf_p, vec3(1.2, 1.2, 1.2)), sdSphere(transf_p, 1.3))
-        ),
-        sdTorus(transf_p, 1.1, 0.7)
-    );
+	vec3 transf_p = applyTransf (rotateX(-PI / 6), p);
+		 transf_p = applyTransf (rotateY(-PI / 2.5), transf_p);
+	// return sdTorus(transf_p, 1, 0.5);
+	return sdDiff( 
+		sdUnion(
+			sdSphere(transf_p, 0.5),
+			sdDiff(sdBox(transf_p, vec3(1.2, 1.2, 1.2)), sdSphere(transf_p, 1.3))
+		),
+		sdTorus(transf_p, 1.1, 0.7)
+	);
 }
 
 // for ray marching the gradient at the contact point is orthogonal
@@ -33,9 +33,9 @@ float sdTotalScene (vec3 p) {
 // let's approximate the gradient vector with that information
 vec3 sceneNormalAt (vec3 p) {
   return normalize({
-    sdTotalScene ({p.x + EPSILON, p.y, p.z}) - sdTotalScene ({p.x - EPSILON, p.y, p.z}),
-    sdTotalScene ({p.x, p.y + EPSILON, p.z}) - sdTotalScene ({p.x, p.y - EPSILON, p.z}),
-    sdTotalScene ({p.x, p.y, p.z + EPSILON}) - sdTotalScene ({p.x, p.y, p.z - EPSILON})
+	sdTotalScene ({p.x + EPSILON, p.y, p.z}) - sdTotalScene ({p.x - EPSILON, p.y, p.z}),
+	sdTotalScene ({p.x, p.y + EPSILON, p.z}) - sdTotalScene ({p.x, p.y - EPSILON, p.z}),
+	sdTotalScene ({p.x, p.y, p.z + EPSILON}) - sdTotalScene ({p.x, p.y, p.z - EPSILON})
   });
 }
 
@@ -85,8 +85,8 @@ void computeScreenBuffer (t_screen &screen) {
 			char pixel = screen.computeColorGivenDiffuseLight(diffuse, COLOR_STRONG);
 
 			// texture coords ---> screen coords
-			// -0.5  0.5     ---> -width/2 width/2
-			// -0.5  0.5     ---> -height/2 height/2
+			// -0.5  0.5	 ---> -width/2 width/2
+			// -0.5  0.5	 ---> -height/2 height/2
 			int screen_x = (int) ((x + 0.5) * width),
 				screen_y = (int) ((y + 0.5) * height);
 			screen.put (screen_y, screen_x, pixel);

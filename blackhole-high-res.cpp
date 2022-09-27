@@ -27,35 +27,35 @@ const float DP = 0.05;
 
 // core
 float sdAccretionDisc (vec3 p) {
-    p = applyTransf(rotateX(-std::sin((PI / 3.) * 3.2)), p); 
-    p = applyTransf(rotateZ(-std::sin((PI / 3.) * 3.2)), p); 
-    float p1 = sdRoundedCylinder(p, ACC_RAD, ACC_RAD / 6, .001);
-    float p2 = sdSphere(p, ACC_RAD);
-    return sdSmoothSubtraction(p2, p1, .5);
+	p = applyTransf(rotateX(-std::sin((PI / 3.) * 3.2)), p); 
+	p = applyTransf(rotateZ(-std::sin((PI / 3.) * 3.2)), p); 
+	float p1 = sdRoundedCylinder(p, ACC_RAD, ACC_RAD / 6, .001);
+	float p2 = sdSphere(p, ACC_RAD);
+	return sdSmoothSubtraction(p2, p1, .5);
 }
 
 // rough approximation of how light bends
 float interpSpaceDistortion (float sz_rad, float dist_singularity) {
-    float distortion_factor = 2.79;
-    float dist_ratio = sz_rad / dist_singularity;
-    return pow(dist_ratio, distortion_factor);
+	float distortion_factor = 2.79;
+	float dist_ratio = sz_rad / dist_singularity;
+	return pow(dist_ratio, distortion_factor);
 }
 
 vec3 bendLightDirection (vec3 bl_pos, vec3 ray_pos, vec3 ray_dir) {
-    // points at the current direction
-    vec3 u = normalize(ray_dir);
-    // points at the singularity i.e. center of the black hole
-    // (u, v) angle is the maximum deviation angle starting from the current
-    // unchanged light direction
-    vec3 v = normalize(sub(bl_pos, ray_pos));
-    
-    // we are not going to use v directly !
-    // let's bend u in such a way that it follows v (kinda)
-    // also let's consider how close it is in order to bend it more
-    float dist_how_close = length(sub(bl_pos, ray_pos));
-    float lerp_val = interpSpaceDistortion(RS, dist_how_close);
-    
-    return normalize(lerp3(u, v, lerp_val));
+	// points at the current direction
+	vec3 u = normalize(ray_dir);
+	// points at the singularity i.e. center of the black hole
+	// (u, v) angle is the maximum deviation angle starting from the current
+	// unchanged light direction
+	vec3 v = normalize(sub(bl_pos, ray_pos));
+	
+	// we are not going to use v directly !
+	// let's bend u in such a way that it follows v (kinda)
+	// also let's consider how close it is in order to bend it more
+	float dist_how_close = length(sub(bl_pos, ray_pos));
+	float lerp_val = interpSpaceDistortion(RS, dist_how_close);
+	
+	return normalize(lerp3(u, v, lerp_val));
 }
 
 float normalizedNoiseTexture (float x, float y) {
@@ -68,15 +68,15 @@ float normalizedNoiseTexture (float x, float y) {
 
 // coord is uv normalized !
 float gridTexture (float coord_x, float coord_y) {
-    float scale = 3.;
+	float scale = 3.;
 	float dp = gtime / 5.;
-    float gx = fixed_fmod((coord_x + dp) * scale, .5f);
-    float gy = fixed_fmod(coord_y * scale, .5f);
-    // dot
-    // return min(1.0, step (gx + gy, .1));
-    
-    // row col
-    return std::min(1.0f, step (gx, 0.1f) + step (gy, 0.1f));
+	float gx = fixed_fmod((coord_x + dp) * scale, .5f);
+	float gy = fixed_fmod(coord_y * scale, .5f);
+	// dot
+	// return min(1.0, step (gx + gy, .1));
+	
+	// row col
+	return std::min(1.0f, step (gx, 0.1f) + step (gy, 0.1f));
 }
 
 void fragmentHandler (float x, float y, t_screen *screen) {
@@ -148,8 +148,8 @@ void fragmentHandler (float x, float y, t_screen *screen) {
 	char pixel = screen->computeColorGivenDiffuseLight(diffuse, COLOR_STRONG);
 
 	// texture coords ---> screen coords
-	// -0.5  0.5     ---> -width/2 width/2
-	// -0.5  0.5     ---> -height/2 height/2
+	// -0.5  0.5	 ---> -width/2 width/2
+	// -0.5  0.5	 ---> -height/2 height/2
 	int screen_x = (int) ((x + 0.5) * width),
 		screen_y = (int) ((y + 0.5) * height);
 	screen->put (screen_y, screen_x, pixel);
@@ -203,7 +203,7 @@ int main () {
 		gtime += .2;
 
 		// attempt 60fps
-    	using namespace std::literals::chrono_literals;
+		using namespace std::literals::chrono_literals;
 		std::this_thread::sleep_for(16ms);
 	}
 	return 0;

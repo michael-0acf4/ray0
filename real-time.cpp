@@ -18,17 +18,17 @@ float gtime = 0;
 
 // core
 float sdTotalScene (vec3 p) {
-    vec3 transf_p = applyTransf (rotateY(-gtime), p);
-    transf_p = applyTransf (rotateX(-gtime), transf_p);
-    transf_p = applyTransf (rotateZ(-gtime), transf_p);
-    // return sdTorus(transf_p, 1, 0.5);
-    return sdDiff( 
-        sdUnion(
-            sdSphere(transf_p, 0.25),
-            sdDiff(sdBox(transf_p, vec3(0.8, 0.8, 0.8)), sdSphere(transf_p, 1.))
-        ),
-        sdTorus(transf_p, 1, 0.5)
-    );
+	vec3 transf_p = applyTransf (rotateY(-gtime), p);
+	transf_p = applyTransf (rotateX(-gtime), transf_p);
+	transf_p = applyTransf (rotateZ(-gtime), transf_p);
+	// return sdTorus(transf_p, 1, 0.5);
+	return sdDiff( 
+		sdUnion(
+			sdSphere(transf_p, 0.25),
+			sdDiff(sdBox(transf_p, vec3(0.8, 0.8, 0.8)), sdSphere(transf_p, 1.))
+		),
+		sdTorus(transf_p, 1, 0.5)
+	);
 }
 
 // for ray marching the gradient at the contact point is orthogonal
@@ -36,9 +36,9 @@ float sdTotalScene (vec3 p) {
 // just an approximation of the gradient vector
 vec3 sceneNormalAt (vec3 p) {
   return normalize({
-    sdTotalScene ({p.x + EPSILON, p.y, p.z}) - sdTotalScene ({p.x - EPSILON, p.y, p.z}),
-    sdTotalScene ({p.x, p.y + EPSILON, p.z}) - sdTotalScene ({p.x, p.y - EPSILON, p.z}),
-    sdTotalScene ({p.x, p.y, p.z + EPSILON}) - sdTotalScene ({p.x, p.y, p.z - EPSILON})
+	sdTotalScene ({p.x + EPSILON, p.y, p.z}) - sdTotalScene ({p.x - EPSILON, p.y, p.z}),
+	sdTotalScene ({p.x, p.y + EPSILON, p.z}) - sdTotalScene ({p.x, p.y - EPSILON, p.z}),
+	sdTotalScene ({p.x, p.y, p.z + EPSILON}) - sdTotalScene ({p.x, p.y, p.z - EPSILON})
   });
 }
 
@@ -93,8 +93,8 @@ void computeScreenBuffer (t_screen *screen) {
 			char pixel = screen->computeColorGivenDiffuseLight(diffuse, COLOR_LIGHT);
 
 			// texture coords ---> screen coords
-			// -0.5  0.5     ---> -width/2 width/2
-			// -0.5  0.5     ---> -height/2 height/2
+			// -0.5  0.5	 ---> -width/2 width/2
+			// -0.5  0.5	 ---> -height/2 height/2
 			int screen_x = (int) ((x + 0.5) * width),
 				screen_y = (int) ((y + 0.5) * height);
 			screen->put (screen_y, screen_x, pixel);

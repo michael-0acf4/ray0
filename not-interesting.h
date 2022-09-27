@@ -29,7 +29,7 @@ struct mat4 {
 		m20, m21, m22, m23,
 		m30, m31, m32, m33;
 	
-    mat4 (float m00, float m01, float m02, float m03,
+	mat4 (float m00, float m01, float m02, float m03,
 		float m10, float m11, float m12, float m13,
 		float m20, float m21, float m22, float m23,
 		float m30, float m31, float m32, float m33) :
@@ -55,15 +55,15 @@ struct t_screen {
 		}
 	}
 
-    char computeColorGivenDiffuseLight (float light, const char *palette = COLOR_LIGHT) {
-        float len = (float) strlen (palette);
-        int index = std::min (
-            std::max (0, (int) (light * len)),
-            (int) (len - 1)
-        );
-        // reverse
-        return palette[(int) len - index - 1];
-    }
+	char computeColorGivenDiffuseLight (float light, const char *palette = COLOR_LIGHT) {
+		float len = (float) strlen (palette);
+		int index = std::min (
+			std::max (0, (int) (light * len)),
+			(int) (len - 1)
+		);
+		// reverse
+		return palette[(int) len - index - 1];
+	}
 
 	void put (int y, int x, char pixel) {
 		if (x < 0 || x >= (int) width || y >= (int) height || y < 0)
@@ -143,41 +143,41 @@ vec3 applyTransf (mat4 m, vec3 v) {
 
 // basic transformations
 mat4 rotateY (float t) {
-    float ct = std::cos (t);
-    float st = std::sin (t);
-    return mat4 (
-        ct, 0, st, 0,
-        0, 1,  0, 0,
-        -st, 0, ct, 0,
-        0, 0, 0, 1
-    );
+	float ct = std::cos (t);
+	float st = std::sin (t);
+	return mat4 (
+		ct, 0, st, 0,
+		0, 1,  0, 0,
+		-st, 0, ct, 0,
+		0, 0, 0, 1
+	);
 }
 
 mat4 rotateZ (float t) {
-    float ct = std::cos (t);
-    float st = std::sin (t);
-    return mat4 (
-        ct, -st, 0, 0,
-        st, ct, 0, 0,
-        0, 0, 1, 0,
-        0, 0, 0, 1
-    );
+	float ct = std::cos (t);
+	float st = std::sin (t);
+	return mat4 (
+		ct, -st, 0, 0,
+		st, ct, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1
+	);
 }
 
 mat4 rotateX (float t) {
-    float ct = std::cos (t);
-    float st = std::sin (t);
-    return mat4 (
-        1, 0, 0, 0,
-        0, ct, -st, 0,
-        0, st, ct, 0,
-        0, 0, 0, 1
-    );
+	float ct = std::cos (t);
+	float st = std::sin (t);
+	return mat4 (
+		1, 0, 0, 0,
+		0, ct, -st, 0,
+		0, st, ct, 0,
+		0, 0, 0, 1
+	);
 }
 
 // shapes
 inline float sdSphere (vec3 p, float radius) {
-    return length(p) - radius;
+	return length(p) - radius;
 }
 
 inline float sdBox (vec3 p, vec3 b) {
@@ -189,21 +189,21 @@ inline float sdBox (vec3 p, vec3 b) {
 }
 
 inline float sdTorus (vec3 p, float tx, float ty) {
-    return -ty + sqrt (
-        p.y*p.y + std::pow(sqrt(p.x*p.x + p.z*p.z) - tx, 2)
-    );
+	return -ty + sqrt (
+		p.y*p.y + std::pow(sqrt(p.x*p.x + p.z*p.z) - tx, 2)
+	);
 }
 
 inline float sdUnion (float distA, float distB) {
-    return std::min (distA, distB);
+	return std::min (distA, distB);
 }
 
 inline float sdInter (float distA, float distB) {
-    return std::max (distA, distB);
+	return std::max (distA, distB);
 }
 
 inline float sdDiff (float distA, float distB) {
-    return std::max (distA, -distB);
+	return std::max (distA, -distB);
 }
 
 vec3 lerp3 (vec3 colorone, vec3 colortwo, float value) {
@@ -222,18 +222,18 @@ float clamp (float value, float min, float max) {
 }
 
 float sdRoundedCylinder (vec3 p, float ra, float rb, float h) {
-    vec3 d = vec3(length({p.x, 0., p.z}) - 2.0 * ra + rb, fabs(p.y) - h, 0.);
-    return std::min(std::max(d.x, d.y), 0.f) + length(v_max(d, {0., 0., 0.})) - rb;
+	vec3 d = vec3(length({p.x, 0., p.z}) - 2.0 * ra + rb, fabs(p.y) - h, 0.);
+	return std::min(std::max(d.x, d.y), 0.f) + length(v_max(d, {0., 0., 0.})) - rb;
 }
 
 float sdSmoothSubtraction (float d1, float d2, float k) {
-    float h = clamp(0.5 - 0.5 * (d2 + d1) / k, 0.0, 1.0);
-    return lerp(d2, -d1, h) + k * h * (1.0 - h);
+	float h = clamp(0.5 - 0.5 * (d2 + d1) / k, 0.0, 1.0);
+	return lerp(d2, -d1, h) + k * h * (1.0 - h);
 }
 
 float step (float a, float edge) {
-    if (a < edge) return 1.;
-    return 0.;
+	if (a < edge) return 1.;
+	return 0.;
 }
 
 float fixed_fmod (float a, float n) {
