@@ -146,9 +146,9 @@ mat4 rotateY (float t) {
 	float ct = std::cos (t);
 	float st = std::sin (t);
 	return mat4 (
-		ct, 0, st, 0,
+		ct, 0, -st, 0,
 		0, 1,  0, 0,
-		-st, 0, ct, 0,
+		st, 0, ct, 0,
 		0, 0, 0, 1
 	);
 }
@@ -169,8 +169,8 @@ mat4 rotateX (float t) {
 	float st = std::sin (t);
 	return mat4 (
 		1, 0, 0, 0,
-		0, ct, -st, 0,
-		0, st, ct, 0,
+		0, ct, st, 0,
+		0, -st, ct, 0,
 		0, 0, 0, 1
 	);
 }
