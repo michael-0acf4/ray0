@@ -232,7 +232,6 @@ float sdSmoothSubtraction (float d1, float d2, float k) {
 }
 
 float step (float a, float edge) {
-    // test sigmoid
     if (a < edge) return 1.;
     return 0.;
 }
