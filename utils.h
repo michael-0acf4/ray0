@@ -210,3 +210,15 @@ inline float step(float a, float edge) {
 inline float fixed_fmod(float a, float n) {
   return std::fmod(std::fmod(a, n) + n, n);
 }
+
+// for ray marching the gradient at the contact point is orthogonal to the
+// surface, approximating it is enough in practice
+inline vec3 sceneNormalAt(vec3 p, float (*dist)(vec3)) {
+  const float x =
+      dist({p.x + EPSILON, p.y, p.z}) - dist({p.x - EPSILON, p.y, p.z});
+  const float y =
+      dist({p.x, p.y + EPSILON, p.z}) - dist({p.x, p.y - EPSILON, p.z});
+  const float z =
+      dist({p.x, p.y, p.z + EPSILON}) - dist({p.x, p.y, p.z - EPSILON});
+  return normalize({x, y, z});
+}

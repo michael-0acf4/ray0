@@ -9,7 +9,6 @@
 
 constexpr float min_depth = 0;
 constexpr float max_depth = 100;
-constexpr float radius = 1.;
 constexpr float width = 120;
 constexpr float height = 120;
 
@@ -22,18 +21,6 @@ inline float sdTotalScene(vec3 p) {
                         sdDiff(sdBox(transf_p, vec3(1.2, 1.2, 1.2)),
                                sdSphere(transf_p, 1.3))),
                 sdTorus(transf_p, 1.1, 0.7));
-}
-
-// for ray marching the gradient at the contact point is orthogonal
-// to the contact surface
-// let's approximate the gradient vector with that information
-inline vec3 sceneNormalAt(vec3 p) {
-  return normalize({sdTotalScene({p.x + EPSILON, p.y, p.z}) -
-                        sdTotalScene({p.x - EPSILON, p.y, p.z}),
-                    sdTotalScene({p.x, p.y + EPSILON, p.z}) -
-                        sdTotalScene({p.x, p.y - EPSILON, p.z}),
-                    sdTotalScene({p.x, p.y, p.z + EPSILON}) -
-                        sdTotalScene({p.x, p.y, p.z - EPSILON})});
 }
 
 inline float rayMarch(vec3 camera, vec3 cam_dir) {
@@ -72,7 +59,7 @@ inline void computeScreenBuffer(t_screen &screen) {
       float diffuse = 0.1; // background light
       if (d_traveled <= max_depth) {
         const vec3 contact_point = add(camera, scaleReal(cam_dir, d_traveled));
-        const vec3 contact_normal = sceneNormalAt(contact_point);
+        const vec3 contact_normal = sceneNormalAt(contact_point, &sdTotalScene);
         const vec3 light_pos{3., 1., 2.};
         // light_pos = applyTransf(rotateY(-gtime), light_pos);
         // dir of the ray that hits the sphere

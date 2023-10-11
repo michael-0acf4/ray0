@@ -11,22 +11,8 @@ constexpr float width = 50;
 constexpr float height = 35;
 const char *color = "******+++===----:::......  "; // dark ---> bright
 
-// core
-// distance function for the scene
 // let's try a sphere at (0, 0, 0)
 inline float sdTotalScene(vec3 p) { return length(p) - radius; }
-
-// for ray marching the gradient at the contact point is orthogonal
-// to the contact surface
-// let's approximate the gradient vector with that information
-inline vec3 sceneNormalAt(vec3 p) {
-  return normalize({sdTotalScene({p.x + EPSILON, p.y, p.z}) -
-                        sdTotalScene({p.x - EPSILON, p.y, p.z}),
-                    sdTotalScene({p.x, p.y + EPSILON, p.z}) -
-                        sdTotalScene({p.x, p.y - EPSILON, p.z}),
-                    sdTotalScene({p.x, p.y, p.z + EPSILON}) -
-                        sdTotalScene({p.x, p.y, p.z - EPSILON})});
-}
 
 inline float rayMarch(vec3 camera, vec3 cam_dir) {
   float d_traveled = min_depth; // basically at the start of the screen, ie. 0
@@ -59,7 +45,7 @@ void draw(float elapsedTime = 1.) {
       if (d_traveled <= max_depth) {
         // hits the scene i.e. the sphere
         const vec3 contact_point = add(camera, scaleReal(cam_dir, d_traveled));
-        const vec3 contact_normal = sceneNormalAt(contact_point);
+        const vec3 contact_normal = sceneNormalAt(contact_point, &sdTotalScene);
         const vec3 light_pos{1., 1., 2.};
         vec3 light_dir = sub(light_pos, contact_point);
         light_dir = normalize(light_dir);

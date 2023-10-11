@@ -10,8 +10,6 @@
 
 constexpr float min_depth = 0;
 constexpr float max_depth = 100;
-constexpr float radius = 1.;
-constexpr float eps = 0.01;
 constexpr float width = 120;
 constexpr float height = 80;
 float gtime = 0;
@@ -26,18 +24,6 @@ float sdTotalScene(vec3 p) {
                         sdDiff(sdBox(transf_p, vec3(0.8, 0.8, 0.8)),
                                sdSphere(transf_p, 1.))),
                 sdTorus(transf_p, 1, 0.5));
-}
-
-// for ray marching the gradient at the contact point is orthogonal
-// to the surface
-// just an approximation of the gradient vector
-vec3 sceneNormalAt(vec3 p) {
-  return normalize({sdTotalScene({p.x + EPSILON, p.y, p.z}) -
-                        sdTotalScene({p.x - EPSILON, p.y, p.z}),
-                    sdTotalScene({p.x, p.y + EPSILON, p.z}) -
-                        sdTotalScene({p.x, p.y - EPSILON, p.z}),
-                    sdTotalScene({p.x, p.y, p.z + EPSILON}) -
-                        sdTotalScene({p.x, p.y, p.z - EPSILON})});
 }
 
 // unlike the blackhole
@@ -83,7 +69,7 @@ void computeScreenBuffer(t_screen *screen) {
         // hits the scene
         // with light
         const vec3 contact_point = add(camera, scaleReal(cam_dir, d_traveled));
-        const vec3 contact_normal = sceneNormalAt(contact_point);
+        const vec3 contact_normal = sceneNormalAt(contact_point, &sdTotalScene);
         const vec3 light_pos{1., 1., 2.};
         // light_pos = applyTransf(rotateY(-gtime), light_pos);
         // dir of the ray that hits the sphere
