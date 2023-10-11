@@ -4,11 +4,11 @@
 
 #include "utils.h"
 
-const float min_depth = 0.;
-const float max_depth = 100.;
-const float radius = 1.;
-const float width = 50;
-const float height = 35;
+constexpr float min_depth = 0.;
+constexpr float max_depth = 100.;
+constexpr float radius = 1.;
+constexpr float width = 50;
+constexpr float height = 35;
 const char *color = "******+++===----:::......  "; // dark ---> bright
 
 // core
@@ -51,8 +51,8 @@ void draw(float elapsedTime = 1.) {
   for (float y = sh; y < eh; y++) {
     for (float x = sx; x < ex; x++) {
       // define a direction for each pixel
-      vec3 camera{0., 0., 1.003}; // camera must be above
-      vec3 cam_dir = normalize({x, y, -1.});
+      const vec3 camera{0., 0., 1.003}; // camera must be above
+      const vec3 cam_dir = normalize({x, y, -1.});
 
       float d_traveled = rayMarch(camera, cam_dir);
       char pixel = ' ';

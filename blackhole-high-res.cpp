@@ -7,23 +7,24 @@
 
 #include "utils.h"
 
-// use a thread for each fragment
+// FIXME: per sub-region should be doable
+// use thread per fragment
 #define USE_THREAD 1
 
-const float width = 130;
-const float height = 80;
+constexpr float width = 130;
+constexpr float height = 80;
 
 // black hole configuration
-const float RS = .125;         // singularity radius
-const float PS_RAD = 1.5 * RS; // photon sphere radius
-const float ACC_RAD = 3. * RS; // accretion disc radius
+constexpr float RS = .125;         // singularity radius
+constexpr float PS_RAD = 1.5 * RS; // photon sphere radius
+constexpr float ACC_RAD = 3. * RS; // accretion disc radius
 
 float gtime = .1;
 
 // ray marching configuration
-const float MAX_DEPTH = 100.;
-const int MAX_STEPS = 300;
-const float DP = 0.05;
+constexpr float MAX_DEPTH = 100.;
+constexpr int MAX_STEPS = 300;
+constexpr float DP = 0.05;
 
 // core
 inline float sdAccretionDisc(vec3 p) {
@@ -69,7 +70,7 @@ inline float normalizedNoiseTexture(float x, float y) {
 
 // coord is uv normalized !
 inline float gridTexture(float coord_x, float coord_y) {
-  const float scale = 3.;
+  constexpr float scale = 3.;
   const float dp = gtime / 5.;
   const float gx = fixed_fmod((coord_x + dp) * scale, .5f);
   const float gy = fixed_fmod(coord_y * scale, .5f);
@@ -82,22 +83,17 @@ inline float gridTexture(float coord_x, float coord_y) {
 
 void fragmentHandler(float x, float y, t_screen *screen) {
   // we define a direction for each pixel
-  vec3 camera{0., 0., 2.}; // the camera must be above
-  vec3 cam_dir = normalize({x, y, -1.});
+  const vec3 camera{0., 0., 2.}; // the camera must be above
+  const vec3 cam_dir = normalize({x, y, -1.});
 
   // ray marching
-  float dtravel = 0.05; // basically at the start of the screen, ie. 0
+  float dtravel = 0.05;
 
-  vec3 bl_pos(0., 0., 0.);
+  const vec3 bl_pos(0., 0., 0.);
   vec3 ray_pos = camera;
   vec3 ray_dir = cam_dir;
 
   for (int i = 0; i < MAX_STEPS; i++) {
-    // usual SDF
-    // ray_pos = add(ray_pos, scaleReal(cam_dir, DP)); // or just don't change
-    // the value of ray_dir
-
-    // bending the SDF
     ray_dir = bendLightDirection(bl_pos, ray_pos, ray_dir);
     ray_pos = add(ray_pos, scaleReal(ray_dir, DP));
 
@@ -119,21 +115,21 @@ void fragmentHandler(float x, float y, t_screen *screen) {
 
   // construct the accretion disk and the photon sphere
   if (dtravel < MAX_DEPTH) {
-    vec3 delta = sub(ray_pos, bl_pos);
+    const vec3 delta = sub(ray_pos, bl_pos);
     // make it glow more as it approaches the center
-    float glow = .3 / std::pow(length(delta),
-                               2.); // create glow and diminish it with distance
-    glow = clamp(glow, 0., 1.);     // remove artifacts
+    // create glow and diminish it with distance
+    float glow = .3 / std::pow(length(delta), 2.);
+    glow = clamp(glow, 0., 1.); // remove artifacts
 
     // rotation effect
     // the noise-ish texture is normalized and have deterministic values
     // rotate the uv coordinate
-    float rot_vel = 3.;
-    float s = std::sin(gtime * rot_vel), c = std::cos(gtime * rot_vel);
-    float tuv_x = ray_pos.y;
-    float tuv_y = ray_pos.z;
-    float rot_x = c * tuv_x - s * tuv_y;
-    float rot_y = s * tuv_x + c * tuv_y;
+    constexpr float rot_vel = 3.;
+    const float s = std::sin(gtime * rot_vel), c = std::cos(gtime * rot_vel);
+    const float tuv_x = ray_pos.y;
+    const float tuv_y = ray_pos.z;
+    const float rot_x = c * tuv_x - s * tuv_y;
+    const float rot_y = s * tuv_x + c * tuv_y;
 
     float tex_color = normalizedNoiseTexture(rot_x, rot_y);
 
@@ -148,24 +144,25 @@ void fragmentHandler(float x, float y, t_screen *screen) {
   }
 
   // end ray marching
-
-  char pixel = screen->computeColorGivenDiffuseLight(diffuse, COLOR_STRONG);
+  const char pixel =
+      screen->computeColorGivenDiffuseLight(diffuse, COLOR_STRONG);
 
   // texture coords ---> screen coords
   // -0.5  0.5	 ---> -width/2 width/2
   // -0.5  0.5	 ---> -height/2 height/2
-  int screen_x = (int)((x + 0.5) * width), screen_y = (int)((y + 0.5) * height);
+  const int screen_x = (int)((x + 0.5) * width),
+            screen_y = (int)((y + 0.5) * height);
   screen->put(screen_y, screen_x, pixel);
 }
 
 void computeScreenBufferConcurrent(t_screen *screen) {
   // motivation : the bigger the screensize, the more the steps
-  const float dp =
-      1.f / std::max(height, width); // we can also assign an arbitrary step
+  // we can also assign an arbitrary step
+  const float dp = 1.f / std::max(height, width);
 
   // normalized coordinates centered at (0., 0.)
-  const float sy = -0.5, ey = 0.5;
-  const float sx = -0.5, ex = 0.5;
+  constexpr float sy = -0.5, ey = 0.5;
+  constexpr float sx = -0.5, ex = 0.5;
   const float ratio = width / height;
 
   // iterate through the texture coordinate

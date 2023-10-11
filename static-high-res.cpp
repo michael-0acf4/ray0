@@ -7,11 +7,11 @@
 
 #include "utils.h"
 
-const float min_depth = 0;
-const float max_depth = 100;
-const float radius = 1.;
-const float width = 120;
-const float height = 120;
+constexpr float min_depth = 0;
+constexpr float max_depth = 100;
+constexpr float radius = 1.;
+constexpr float width = 120;
+constexpr float height = 120;
 
 // core
 inline float sdTotalScene(vec3 p) {
@@ -54,8 +54,8 @@ inline float rayMarch(vec3 camera, vec3 cam_dir) {
 
 inline void computeScreenBuffer(t_screen &screen) {
   // motivation, the bigger the screensize, the more the steps
-  const float dp =
-      1 / std::max(height, width); // we can also assign an arbitrary step
+  // we can also assign an arbitrary step
+  const float dp = 1 / std::max(height, width);
 
   // normalized coordinates centered at (0., 0.)
   const float sy = -0.5, ey = 0.5;
@@ -65,31 +65,30 @@ inline void computeScreenBuffer(t_screen &screen) {
   for (float y = sy; y < ey; y += dp) {
     for (float x = sx; x < ex; x += dp) {
       // we define a direction for each pixel
-      vec3 camera{0., 0., 5.}; // the camera must be above
-      vec3 cam_dir = normalize({x, y, -1.});
+      const vec3 camera{0., 0., 5.}; // the camera must be above
+      const vec3 cam_dir = normalize({x, y, -1.});
 
       float d_traveled = rayMarch(camera, cam_dir);
       float diffuse = 0.1; // background light
       if (d_traveled <= max_depth) {
-        // hits the scene
-        // with light
-        vec3 contact_point = add(camera, scaleReal(cam_dir, d_traveled));
-        vec3 contact_normal = sceneNormalAt(contact_point);
-        vec3 light_pos{3., 1., 2.}; // i.e. the sun
+        const vec3 contact_point = add(camera, scaleReal(cam_dir, d_traveled));
+        const vec3 contact_normal = sceneNormalAt(contact_point);
+        const vec3 light_pos{3., 1., 2.};
         // light_pos = applyTransf(rotateY(-gtime), light_pos);
-        vec3 light_dir = sub(
-            light_pos, contact_point); // dir of the ray that hits the sphere
+        // dir of the ray that hits the sphere
+        vec3 light_dir = sub(light_pos, contact_point);
         light_dir = normalize(light_dir);
         diffuse = dot(light_dir, contact_normal);
       }
 
-      char pixel = screen.computeColorGivenDiffuseLight(diffuse, COLOR_STRONG);
+      const char pixel =
+          screen.computeColorGivenDiffuseLight(diffuse, COLOR_STRONG);
 
       // texture coords ---> screen coords
       // -0.5	0.5	 ---> -width/2 width/2
       // -0.5	0.5	 ---> -height/2 height/2
-      int screen_x = (int)((x + 0.5) * width),
-          screen_y = (int)((y + 0.5) * height);
+      const int screen_x = (int)((x + 0.5) * width),
+                screen_y = (int)((y + 0.5) * height);
       screen.put(screen_y, screen_x, pixel);
     }
   }
