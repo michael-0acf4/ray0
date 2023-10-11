@@ -5,16 +5,16 @@
 #include <iostream>
 #include <thread>
 
-#include "not-interesting.h"
+#include "utils.h"
 
-float min_depth = 0;
-float max_depth = 100;
-float radius = 1.;
-float width = 120;
-float height = 120;
+const float min_depth = 0;
+const float max_depth = 100;
+const float radius = 1.;
+const float width = 120;
+const float height = 120;
 
 // core
-float sdTotalScene(vec3 p) {
+inline float sdTotalScene(vec3 p) {
   vec3 transf_p = applyTransf(rotateX(-PI / 6), p);
   transf_p = applyTransf(rotateY(-PI / 2.5), transf_p);
   // return sdTorus(transf_p, 1, 0.5);
@@ -27,7 +27,7 @@ float sdTotalScene(vec3 p) {
 // for ray marching the gradient at the contact point is orthogonal
 // to the contact surface
 // let's approximate the gradient vector with that information
-vec3 sceneNormalAt(vec3 p) {
+inline vec3 sceneNormalAt(vec3 p) {
   return normalize({sdTotalScene({p.x + EPSILON, p.y, p.z}) -
                         sdTotalScene({p.x - EPSILON, p.y, p.z}),
                     sdTotalScene({p.x, p.y + EPSILON, p.z}) -
@@ -36,7 +36,7 @@ vec3 sceneNormalAt(vec3 p) {
                         sdTotalScene({p.x, p.y, p.z - EPSILON})});
 }
 
-float rayMarch(vec3 camera, vec3 cam_dir) {
+inline float rayMarch(vec3 camera, vec3 cam_dir) {
   float d_traveled = min_depth; // basically at the start of the screen, ie. 0
   int steps = 200;
   while (steps > 0) {
@@ -52,14 +52,14 @@ float rayMarch(vec3 camera, vec3 cam_dir) {
   return d_traveled;
 }
 
-void computeScreenBuffer(t_screen &screen) {
+inline void computeScreenBuffer(t_screen &screen) {
   // motivation, the bigger the screensize, the more the steps
-  float dp =
+  const float dp =
       1 / std::max(height, width); // we can also assign an arbitrary step
 
   // normalized coordinates centered at (0., 0.)
-  float sy = -0.5, ey = 0.5;
-  float sx = -0.5, ex = 0.5;
+  const float sy = -0.5, ey = 0.5;
+  const float sx = -0.5, ex = 0.5;
 
   // iterate through the texture coordinate
   for (float y = sy; y < ey; y += dp) {

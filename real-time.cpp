@@ -6,7 +6,7 @@
 
 #include <vector>
 
-#include "not-interesting.h"
+#include "utils.h"
 
 float min_depth = 0;
 float max_depth = 100;

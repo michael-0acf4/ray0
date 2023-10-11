@@ -2,7 +2,7 @@
 #include <cstring>
 #include <iostream>
 
-#include "not-interesting.h"
+#include "utils.h"
 
 const float min_depth = 0.;
 const float max_depth = 100.;

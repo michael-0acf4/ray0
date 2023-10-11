@@ -5,13 +5,13 @@
 #include <iostream>
 #include <thread>
 
-#include "not-interesting.h"
+#include "utils.h"
 
 // use a thread for each fragment
 #define USE_THREAD 1
 
-float width = 130;
-float height = 80;
+const float width = 130;
+const float height = 80;
 
 // black hole configuration
 const float RS = .125;         // singularity radius
@@ -26,53 +26,53 @@ const int MAX_STEPS = 300;
 const float DP = 0.05;
 
 // core
-float sdAccretionDisc(vec3 p) {
+inline float sdAccretionDisc(vec3 p) {
   p = applyTransf(rotateX(-std::sin((PI / 3.) * 3.2)), p);
   p = applyTransf(rotateZ(-std::sin((PI / 3.) * 3.2)), p);
-  float p1 = sdRoundedCylinder(p, ACC_RAD, ACC_RAD / 6, .001);
-  float p2 = sdSphere(p, ACC_RAD);
+  const float p1 = sdRoundedCylinder(p, ACC_RAD, ACC_RAD / 6, .001);
+  const float p2 = sdSphere(p, ACC_RAD);
   return sdSmoothSubtraction(p2, p1, .5);
 }
 
 // rough approximation of how light bends
-float interpSpaceDistortion(float sz_rad, float dist_singularity) {
-  float distortion_factor = 2.79;
-  float dist_ratio = sz_rad / dist_singularity;
+inline float interpSpaceDistortion(float sz_rad, float dist_singularity) {
+  const float distortion_factor = 2.79;
+  const float dist_ratio = sz_rad / dist_singularity;
   return pow(dist_ratio, distortion_factor);
 }
 
 vec3 bendLightDirection(vec3 bl_pos, vec3 ray_pos, vec3 ray_dir) {
   // points at the current direction
-  vec3 u = normalize(ray_dir);
+  const vec3 u = normalize(ray_dir);
   // points at the singularity i.e. center of the black hole
   // (u, v) angle is the maximum deviation angle starting from the current
   // unchanged light direction
-  vec3 v = normalize(sub(bl_pos, ray_pos));
+  const vec3 v = normalize(sub(bl_pos, ray_pos));
 
-  // we are not going to use v directly !
-  // let's bend u in such a way that it follows v (kinda)
-  // also let's consider how close it is in order to bend it more
+  // in this setup we use v directly
+  // let's bend u in such a way that it follows v
+  // also let's consider how close it is to bend it properly
   float dist_how_close = length(sub(bl_pos, ray_pos));
   float lerp_val = interpSpaceDistortion(RS, dist_how_close);
 
   return normalize(lerp3(u, v, lerp_val));
 }
 
-float normalizedNoiseTexture(float x, float y) {
-  // noise-ish texture... just like a normalized chess board
-  int sx = (int)(x * 10.f);
-  int sy = (int)(y * 30.f);
+inline float normalizedNoiseTexture(float x, float y) {
+  // noise-ish texture... a normalized chess board
+  const int sx = (int)(x * 10.f);
+  const int sy = (int)(y * 30.f);
   if ((sx + sy) % 2 == 0)
     return 0.3;
   return 1.;
 }
 
 // coord is uv normalized !
-float gridTexture(float coord_x, float coord_y) {
-  float scale = 3.;
-  float dp = gtime / 5.;
-  float gx = fixed_fmod((coord_x + dp) * scale, .5f);
-  float gy = fixed_fmod(coord_y * scale, .5f);
+inline float gridTexture(float coord_x, float coord_y) {
+  const float scale = 3.;
+  const float dp = gtime / 5.;
+  const float gx = fixed_fmod((coord_x + dp) * scale, .5f);
+  const float gy = fixed_fmod(coord_y * scale, .5f);
   // dot
   // return min(1.0, step (gx + gy, .1));
 
@@ -173,6 +173,8 @@ void computeScreenBufferConcurrent(t_screen *screen) {
   std::vector<std::thread> frag_workers;
   for (float y = sy; y < ey; y += dp) {
     for (float x = sx; x < ex; x += dp) {
+      // FIXME: spread work accross max threads (thread spawn has significant
+      // overhead)
 #if USE_THREAD == 1
       std::thread worker(fragmentHandler, x, y * ratio, screen);
       frag_workers.push_back(std::move(worker));
@@ -197,8 +199,6 @@ int main() {
 #if USE_THREAD == 1
   std::cout << "/!\\ Preparing ~" << pow(std::max(height, width), 2.f)
             << " parallel tasks\n";
-#else
-  std::cout << "No threads ? :(";
 #endif
 
   while (true) {
