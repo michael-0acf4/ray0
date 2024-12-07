@@ -21,10 +21,10 @@ extern const char *COLOR_LIGHT;
 class Engine {
 public:
   Engine(float w, float h)
-      : width(w), height(h), fragments(static_cast<size_t>(w * h), 0.) {}
+      : width(w), height(h), fragments(static_cast<size_t>(w * h), 0) {}
   ~Engine();
 
-  void update(const std::function<void(float &, const vec2 &)> &shaderFn);
+  void update(const std::function<void(float &, const vec2 &)> &fragmentShader);
   void render(const char *palette = COLOR_LIGHT) const;
   void saveCursor();
   void restoreCursor();
