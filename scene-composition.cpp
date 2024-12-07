@@ -30,7 +30,6 @@ float sdTotalScene(vec3 p) {
 // Unlike the blackhole
 // there is no need for a thread per fragment
 // in this particular implementation of ray marching
-
 inline float rayMarch(vec3 camera, vec3 cam_dir) {
   float distTraveled = minDepth;
   int steps = 200;

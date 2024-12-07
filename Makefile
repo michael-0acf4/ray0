@@ -12,11 +12,5 @@ sphere:
 real:
 	$(call compile_all, scene-composition.cpp, ./bin/a1)
 
-hi:
-	$(call compile_all, static-high-res.cpp, ./bin/a2)
-
 bl:
-	$(call compile_all, blackhole-high-res.cpp, ./bin/a3)
-
-sandb:
-	$(call compile_all, ./sandbox/main.cpp, ./bin/a4)
+	$(call compile_all, blackhole.cpp, ./bin/a3)
