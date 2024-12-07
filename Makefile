@@ -1,7 +1,10 @@
 define compile_all
-	g++ -std=c++14 $(1) -o$(2)
+	g++ -std=c++14 $(1) -o$(2) engine.cpp geom.cpp
 	$(2)
 endef
+
+test:
+	$(call compile_all, test.cpp, ./bin/a0)
 
 sample:
 	$(call compile_all, quick-sketch.cpp, ./bin/a0)
