@@ -1,19 +1,16 @@
 define compile_all
-	g++ -std=c++14 $(1) -o$(2)
+	g++ -std=c++14 -O4 -Isrc/core $(1) -o$(2) src/core/engine.cpp src/core/geom.cpp
 	$(2)
 endef
 
-sample:
-	$(call compile_all, quick-sketch.cpp, ./bin/a0)
+test:
+	$(call compile_all, src/sketches/test.cpp, ./bin/test)
 
-cmp:
-	$(call compile_all, real-time.cpp, ./bin/a1)
+sphere:
+	$(call compile_all, src/sketches/sphere.cpp, ./bin/sphere)
 
-hi:
-	$(call compile_all, static-high-res.cpp, ./bin/a2)
+composition:
+	$(call compile_all, src/sketches/scene-composition.cpp, ./bin/composition)
 
-bl:
-	$(call compile_all, blackhole-high-res.cpp, ./bin/a3)
-
-sandb:
-	$(call compile_all, ./sandbox/main.cpp, ./bin/a4)
+blackhole:
+	$(call compile_all, src/sketches/blackhole.cpp, ./bin/blackhole)

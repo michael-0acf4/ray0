@@ -1,34 +1,11 @@
-# ray0
-
-A GLSL-like renderer on the terminal.
-
-![screenshot](screenshots/cover.png)
-
-## Examples
-
-```bash
-# Simple sphere
-make sphere
-
-# Raymarch on a rotating 3d object
-make composition
-
-# Blackhole
-make blackhole
-```
-
-## Usage
-
-```cpp
 #include "engine.hpp"
 #include "geom.hpp"
 
 constexpr float width = 25;
 constexpr float height = 25;
 constexpr float ratio = width / height;
-constexpr int workerThreads = 4;
 
-void shader(float &fragColor, const vec2 &fragCoord) {
+void shaderUVTest(float &fragColor, const vec2 &fragCoord) {
   const vec2 uv((fragCoord.x / width - 0.5) * ratio,
                 (fragCoord.y / height - 0.5) * ratio);
 
@@ -44,11 +21,8 @@ void shader(float &fragColor, const vec2 &fragCoord) {
 
 int main() {
   Engine engine(width, height);
-  engine.update(shader, workerThreads);
-  engine.render("3210 "); // You can set the color palette or use the default (none)
+  engine.update(shaderUVTest, 4);
+  engine.render("3210 ");
 
   return 0;
 }
-```
-
-![alt text](screenshots/divided-circle.png)
