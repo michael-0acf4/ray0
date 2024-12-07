@@ -40,17 +40,43 @@ void Engine::put(int y, int x, float fragColor) {
 }
 
 void Engine::update(
-    const std::function<void(float &, const vec2 &)> &fragmentShader) {
-  for (int y = 0; y < height; y++) {
-    for (int x = 0; x < width; x++) {
-      vec2 fragCoord(x, y);
-      float fragColor = fragments[y * width + x];
-      float old = fragColor;
+    const std::function<void(float &, const vec2 &)> &fragmentShader,
+    int workers) {
 
-      fragmentShader(fragColor, fragCoord);
+  int maxSupported = std::thread::hardware_concurrency();
+  if (maxSupported == 0) {
+    // https://en.cppreference.com/w/cpp/thread/thread/hardware_concurrency
+    workers = 2;
+  } else {
+    workers = std::max(1, std::min(maxSupported, workers));
+  }
 
-      put(y, x, fragColor);
+  std::vector<std::thread> threads;
+  int rows = height / workers;
+
+  auto taskSlice = [&](int startRow, int endRow) {
+    for (int y = startRow; y < endRow; y++) {
+      for (int x = 0; x < width; x++) {
+        vec2 fragCoord(x, y);
+        float fragColor = fragments[y * width + x];
+
+        fragmentShader(fragColor, fragCoord);
+
+        put(y, x, fragColor);
+      }
     }
+  };
+
+  for (int i = 0; i < workers; i++) {
+    int startRow = i * rows;
+    int endRow = i == workers - 1 ? height : startRow + rows;
+
+    threads.emplace_back(taskSlice, startRow, endRow);
+  }
+
+  for (auto &thread : threads) {
+    if (thread.joinable())
+      thread.join();
   }
 }
 

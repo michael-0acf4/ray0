@@ -24,7 +24,8 @@ public:
       : width(w), height(h), fragments(static_cast<size_t>(w * h), 0) {}
   ~Engine();
 
-  void update(const std::function<void(float &, const vec2 &)> &fragmentShader);
+  void update(const std::function<void(float &, const vec2 &)> &fragmentShader,
+              int workers = 1);
   void render(const char *palette = COLOR_LIGHT) const;
   void saveCursor();
   void restoreCursor();

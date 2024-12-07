@@ -1,7 +1,3 @@
-#include <cmath>
-#include <cstring>
-#include <iostream>
-
 #include "engine.hpp"
 #include "geom.hpp"
 
@@ -25,7 +21,7 @@ void shaderUVTest(float &fragColor, const vec2 &fragCoord) {
 
 int main() {
   Engine engine(width, height);
-  engine.update(shaderUVTest);
+  engine.update(shaderUVTest, 4);
   engine.render("3210 ");
 
   return 0;

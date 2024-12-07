@@ -8,12 +8,9 @@
 #include "engine.hpp"
 #include "geom.hpp"
 
-// FIXME: per sub-region should be doable
-// use thread per fragment
-#define USE_THREAD 1
-
 constexpr float width = 130;
 constexpr float height = 80;
+constexpr float workerThreads = 4;
 
 // black hole configuration
 constexpr float RS = .125;         // singularity radius
@@ -149,7 +146,7 @@ int main() {
     engine.saveCursor();
 
     engine.clear();
-    engine.update(blackholeShader);
+    engine.update(blackholeShader, workerThreads);
     engine.render();
     gtime += .1f;
 
