@@ -118,7 +118,9 @@ float dot(const vec3 &a, const vec3 &b);
 float dot(const vec2 &a, const vec2 &b);
 
 vec2 operator/(const vec2 &a, const vec2 &b);
+vec2 operator/(const vec2 &a, float scalar);
 vec3 operator/(const vec3 &a, const vec3 &b);
+vec3 operator/(const vec3 &a, float scalar);
 
 // Multiply and re-scale (homogenous coordinates)
 vec3 operator>>(const mat4 &m, const vec3 &v);

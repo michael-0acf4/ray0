@@ -2,8 +2,7 @@
 
 constexpr float minDepth = 0;
 constexpr float maxDepth = 100;
-constexpr float width = 42;
-constexpr float height = 42;
+const vec2 iResolution = {42, 42};
 float gtime = 0;
 
 float sdTotalScene(vec3 p) {
@@ -14,11 +13,10 @@ float sdTotalScene(vec3 p) {
 }
 
 void shader(float &fragColor, const vec2 &fragCoord) {
-  const vec2 uv((fragCoord.x - 0.5 * width) / height,
-                (fragCoord.y - 0.5 * height) / height);
+  const vec2 uv = (fragCoord - 0.5 * iResolution) / iResolution.y;
 
   const vec3 camera(0., 0., 3.); // right above the screen
-  const vec3 camDir = normalize({uv.x, uv.y, -1.});
+  const vec3 camDir = normalize(vec3(uv.x, uv.y, -1.));
 
   float traveled = rayMarch({minDepth, maxDepth}, camera, camDir, sdTotalScene);
   if (traveled <= maxDepth) {
@@ -33,7 +31,7 @@ void shader(float &fragColor, const vec2 &fragCoord) {
 }
 
 int main() {
-  Engine engine(width, height);
+  Engine engine(iResolution);
 
   while (true) {
 

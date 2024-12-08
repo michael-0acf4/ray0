@@ -154,8 +154,16 @@ vec2 operator/(const vec2 &a, const vec2 &b) {
   return vec2(a.x / b.x, a.y / b.y);
 }
 
+vec2 operator/(const vec2 &a, float scalar) {
+  return vec2(a.x / scalar, a.y / scalar);
+}
+
 vec3 operator/(const vec3 &a, const vec3 &b) {
   return vec3(a.x / b.x, a.y / b.y, a.z / b.z);
+}
+
+vec3 operator/(const vec3 &a, float scalar) {
+  return vec3(a.x / scalar, a.y / scalar, a.z / scalar);
 }
 
 float dot(const vec3 &a, const vec3 &b) {

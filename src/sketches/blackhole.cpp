@@ -1,15 +1,14 @@
 #include "ray0.hpp"
 
-constexpr float width = 130;
-constexpr float height = 80;
 constexpr float workerThreads = 4;
+
+const vec2 iResolution = {130, 80};
 
 constexpr float RS = .125;         // singularity radius
 constexpr float PS_RAD = 1.5 * RS; // photon sphere radius
 constexpr float ACC_RAD = 3. * RS; // accretion disc radius
 
 float gtime = .1;
-
 constexpr float MAX_DEPTH = 100.;
 constexpr int MAX_STEPS = 300;
 constexpr float DP = 0.05;
@@ -70,11 +69,10 @@ inline float gridTexture(float x, float y) {
 }
 
 void blackholeShader(float &fragColor, const vec2 &fragCoord) {
-  const vec2 uv((fragCoord.x - 0.5 * width) / height,
-                (fragCoord.y - 0.5 * height) / height);
+  const vec2 uv = (fragCoord - 0.5 * iResolution) / iResolution.y;
 
-  const vec3 camera{0., 0., 2.}; // right above the screen
-  const vec3 camDir = normalize({uv.x, uv.y, -1.});
+  const vec3 camera(0., 0., 2.); // right above the screen
+  const vec3 camDir = normalize(vec3(uv.x, uv.y, -1.));
 
   float distTraveled = 0.05;
 
@@ -130,7 +128,7 @@ void blackholeShader(float &fragColor, const vec2 &fragCoord) {
 }
 
 int main() {
-  Engine engine(width, height);
+  Engine engine(iResolution);
 
   while (true) {
 
