@@ -64,7 +64,8 @@ void Engine::update(
     workers = std::max(1, std::min(maxSupported, workers));
   }
 
-  std::vector<std::thread> threads;
+  std::vector<std::future<void>> futures;
+
   int rows = height / workers;
 
   auto taskSlice = [&](int startRow, int endRow) {
@@ -84,14 +85,12 @@ void Engine::update(
     int startRow = i * rows;
     int endRow = i == workers - 1 ? height : startRow + rows;
 
-    threads.emplace_back(taskSlice, startRow, endRow);
-    // std::thread t(taskSlice);
-    // threads.push_back(std::move(t));
+    futures.push_back(
+        std::async(std::launch::async, taskSlice, startRow, endRow));
   }
 
-  for (auto &thread : threads) {
-    if (thread.joinable())
-      thread.join();
+  for (auto &future : futures) {
+    future.get();
   }
 }
 

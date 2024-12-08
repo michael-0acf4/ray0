@@ -3,9 +3,11 @@
 #include <cmath>
 #include <cstring>
 #include <functional>
+#include <future>
 #include <iostream>
 #include <thread>
 #include <vector>
+
 
 #ifdef _WIN32
 #include <windows.h>
