@@ -150,6 +150,10 @@ vec3 operator*(const mat4 &m, const vec3 &v) {
 
 float dot(const vec2 &a, const vec2 &b) { return a.x * b.x + a.y * b.y; }
 
+float dot(const vec3 &a, const vec3 &b) {
+  return a.x * b.x + a.y * b.y + a.z * b.z;
+}
+
 vec2 operator/(const vec2 &a, const vec2 &b) {
   return vec2(a.x / b.x, a.y / b.y);
 }
@@ -164,10 +168,6 @@ vec3 operator/(const vec3 &a, const vec3 &b) {
 
 vec3 operator/(const vec3 &a, float scalar) {
   return vec3(a.x / scalar, a.y / scalar, a.z / scalar);
-}
-
-float dot(const vec3 &a, const vec3 &b) {
-  return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
 vec3 operator>>(const mat4 &m, const vec3 &v) {
@@ -189,18 +189,18 @@ vec3 operator>>(const mat4 &m, const vec3 &v) {
 float length(vec3 a) { return (float)sqrt(a.x * a.x + a.y * a.y + a.z * a.z); }
 
 vec3 v_max(vec3 a, vec3 b) {
-  return {std::max(a.x, b.x), std::max(a.y, b.y), std::max(a.z, b.z)};
+  return vec3(std::max(a.x, b.x), std::max(a.y, b.y), std::max(a.z, b.z));
 }
 
 vec3 v_min(vec3 a, vec3 b) {
-  return {std::min(a.x, b.x), std::min(a.y, b.y), std::min(a.z, b.z)};
+  return vec3(std::min(a.x, b.x), std::min(a.y, b.y), std::min(a.z, b.z));
 }
 
 vec3 normalize(vec3 a) {
   const float L = length(a);
   if (L <= EPSILON)
     return {0., 0., 0.};
-  return {a.x / L, a.y / L, a.z / L};
+  return vec3(a.x / L, a.y / L, a.z / L);
 }
 
 // Transformations
@@ -281,7 +281,7 @@ vec3 sceneNormalAt(vec3 p, const std::function<float(const vec3 &)> &dist) {
       dist({p.x, p.y + EPSILON, p.z}) - dist({p.x, p.y - EPSILON, p.z});
   const float z =
       dist({p.x, p.y, p.z + EPSILON}) - dist({p.x, p.y, p.z - EPSILON});
-  return normalize({x, y, z});
+  return normalize(vec3(x, y, z));
 }
 
 float rayMarch(std::pair<float, float> depth, const vec3 &camera,
