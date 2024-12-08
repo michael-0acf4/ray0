@@ -21,6 +21,9 @@ composition: bin
 donut: bin
 	$(call compile_all, src/sketches/donut.cpp, ./bin/donut)
 
+gradient: bin
+	$(call compile_all, src/sketches/gradient.cpp, ./bin/gradient)
+
 blackhole: bin
 	$(call compile_all, src/sketches/blackhole.cpp, ./bin/blackhole)
 

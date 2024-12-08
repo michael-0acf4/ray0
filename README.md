@@ -7,13 +7,16 @@ A GLSL-like renderer on the terminal.
 ## Examples
 
 ```bash
+# Color gradient test program
+make gradient
+
 # Simple sphere
 make sphere
 
-# Raymarch on a rotating donut
+# Raymarch a rotating donut
 make donut
 
-# Raymarch on a rotating 3d object
+# Raymarch a rotating 3d object
 make composition
 
 # Blackhole
