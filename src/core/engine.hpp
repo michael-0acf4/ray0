@@ -20,6 +20,11 @@ class Engine {
 public:
   Engine(float w, float h)
       : width(w), height(h), fragments(static_cast<size_t>(w * h), 0) {}
+
+  Engine(vec2 iResolution)
+      : width(iResolution.x), height(iResolution.y),
+        fragments(static_cast<size_t>(iResolution.x * iResolution.y), 0) {}
+
   ~Engine();
 
   void update(const std::function<void(float &, const vec2 &)> &fragmentShader,
