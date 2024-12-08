@@ -137,9 +137,10 @@ vec2 operator*(const mat2 &m, const vec2 &v) {
   return vec2(m.m00 * v.x + m.m01 * v.y, m.m10 * v.x + m.m11 * v.y);
 }
 
-vec2 operator*(const mat3 &m, const vec3 &v) {
-  return vec2(m.m00 * v.x + m.m01 * v.y + m.m02 * v.z,
-              m.m10 * v.x + m.m11 * v.y + m.m12 * v.z);
+vec3 operator*(const mat3 &m, const vec3 &v) {
+  return vec3(m.m00 * v.x + m.m01 * v.y + m.m02 * v.z,
+              m.m10 * v.x + m.m11 * v.y + m.m12 * v.z,
+              m.m20 * v.x + m.m21 * v.y + m.m22 * v.z);
 }
 
 vec3 operator*(const mat4 &m, const vec3 &v) {
@@ -186,7 +187,23 @@ vec3 operator>>(const mat4 &m, const vec3 &v) {
 
 // Utils
 
+float length(vec2 a) { return (float)sqrt(a.x * a.x + a.y * a.y); }
 float length(vec3 a) { return (float)sqrt(a.x * a.x + a.y * a.y + a.z * a.z); }
+
+vec2 v_max(vec2 a, vec2 b) {
+  return vec2(std::max(a.x, b.x), std::max(a.y, b.y));
+}
+
+vec2 v_min(vec2 a, vec2 b) {
+  return vec2(std::min(a.x, b.x), std::min(a.y, b.y));
+}
+
+vec2 normalize(vec2 a) {
+  const float L = length(a);
+  if (L <= EPSILON)
+    return vec2();
+  return a / L;
+}
 
 vec3 v_max(vec3 a, vec3 b) {
   return vec3(std::max(a.x, b.x), std::max(a.y, b.y), std::max(a.z, b.z));
@@ -199,8 +216,8 @@ vec3 v_min(vec3 a, vec3 b) {
 vec3 normalize(vec3 a) {
   const float L = length(a);
   if (L <= EPSILON)
-    return {0., 0., 0.};
-  return vec3(a.x / L, a.y / L, a.z / L);
+    return vec3();
+  return a / L;
 }
 
 // Transformations
@@ -229,9 +246,9 @@ float sdSphere(vec3 p, float radius) { return length(p) - radius; }
 
 float sdBox(vec3 p, vec3 b) {
   return length(vec3( // vmax
-      (float)std::max((float)(fabs(p.x) - b.x), 0.f),
-      (float)std::max((float)(fabs(p.y) - b.y), 0.f),
-      (float)std::max((float)(fabs(p.z) - b.z), 0.f)));
+      (float)std::max((float)(fabs(p.x) - b.x), 0.0f),
+      (float)std::max((float)(fabs(p.y) - b.y), 0.0f),
+      (float)std::max((float)(fabs(p.z) - b.z), 0.0f)));
 }
 
 float sdTorus(vec3 p, float tx, float ty) {
@@ -249,18 +266,22 @@ vec3 lerp3(vec3 colorone, vec3 colortwo, float value) {
 }
 
 float lerp(float colorone, float colortwo, float value) {
-  return lerp3(vec3(colorone, 0., 0.), vec3(colortwo, 0., 0.), value).x;
+  return lerp3(vec3(colorone, 0.0f, 0.0f), vec3(colortwo, 0.0f, 0.0f), value).x;
 }
 
 float clamp(float value, float min, float max) {
   return std::max(min, std::min(max, value));
 }
 
+vec3 reflect(const vec3 &incident, const vec3 &normal) {
+  return incident - 2.0f * dot(incident, normal) * normal;
+}
+
 float sdRoundedCylinder(vec3 p, float ra, float rb, float h) {
   const vec3 d =
-      vec3(length({p.x, 0., p.z}) - 2.0 * ra + rb, fabs(p.y) - h, 0.);
-  return std::min(std::max(d.x, d.y), 0.f) + length(v_max(d, {0., 0., 0.})) -
-         rb;
+      vec3(length({p.x, 0.0f, p.z}) - 2.0f * ra + rb, fabs(p.y) - h, 0.0f);
+  return std::min(std::max(d.x, d.y), 0.0f) +
+         length(v_max(d, {0.0f, 0.0f, 0.0f})) - rb;
 }
 
 float sdSmoothSubtraction(float d1, float d2, float k) {

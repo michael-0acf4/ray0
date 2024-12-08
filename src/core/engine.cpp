@@ -21,14 +21,27 @@ void Engine::saveCursor() { std::cout << "\033[s"; }
 void Engine::restoreCursor() { std::cout << "\033[u"; }
 
 void Engine::clear() {
-  for (int i = 0; i < (int)height; i++) {
-    for (int j = 0; j < (int)width; fragments[i * width + j] = 0., j++)
-      ;
-  }
+  std::fill(fragments.begin(), fragments.end(), 0.0f);
+
 #ifdef _WIN32
-  system("cls");
+  // system("cls");
+
+  HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+  if (hConsole != INVALID_HANDLE_VALUE) {
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    if (GetConsoleScreenBufferInfo(hConsole, &csbi)) {
+      DWORD written, cells = csbi.dwSize.X * csbi.dwSize.Y;
+      COORD homeCoords = {0, 0};
+      FillConsoleOutputCharacter(hConsole, ' ', cells, homeCoords, &written);
+      FillConsoleOutputAttribute(hConsole, csbi.wAttributes, cells, homeCoords,
+                                 &written);
+      SetConsoleCursorPosition(hConsole, homeCoords);
+    }
+  }
 #else
-  system("clear");
+  // system("clear");
+  // Clear then move to top-left
+  std::cout << "\033[2J\033[H";
 #endif
 }
 

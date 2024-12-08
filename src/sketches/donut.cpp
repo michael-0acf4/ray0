@@ -2,7 +2,7 @@
 
 constexpr float minDepth = 0;
 constexpr float maxDepth = 100;
-const vec2 iResolution = {42, 42};
+const vec2 fResolution = {42, 42};
 float gtime = 0;
 
 float sdTotalScene(vec3 p) {
@@ -13,7 +13,7 @@ float sdTotalScene(vec3 p) {
 }
 
 void shader(float &fragColor, const vec2 &fragCoord) {
-  const vec2 uv = (fragCoord - 0.5 * iResolution) / iResolution.y;
+  const vec2 uv = (fragCoord - 0.5 * fResolution) / fResolution.y;
 
   const vec3 camera(0., 0., 3.); // right above the screen
   const vec3 camDir = normalize(vec3(uv.x, uv.y, -1.));
@@ -31,7 +31,7 @@ void shader(float &fragColor, const vec2 &fragCoord) {
 }
 
 int main() {
-  Engine engine(iResolution);
+  Engine engine(fResolution);
 
   while (true) {
 
@@ -42,11 +42,12 @@ int main() {
     engine.render();
     engine.restoreCursor();
 
-    gtime += .1f;
+    gtime += 0.1f;
 
     engine.restoreCursor();
     using namespace std::literals::chrono_literals;
     std::this_thread::sleep_for(16ms);
   }
+
   return 0;
 }

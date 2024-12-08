@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <cstdio>
 #include <functional>
 
 #define PI 3.1415
@@ -12,7 +13,7 @@ struct vec2 {
 
   vec2(float x = 0.0f, float y = 0.0f) : x(x), y(y) {}
 
-  void show() const { printf("vec2\n%f %f\n", x, y); }
+  void show() const { std::printf("vec2\n%f %f\n", x, y); }
 
   // Swizzling
   vec2 xy() const { return *this; }
@@ -24,7 +25,7 @@ struct vec3 {
 
   vec3(float x = 0.0f, float y = 0.0f, float z = 0.0f) : x(x), y(y), z(z) {}
 
-  void show() const { printf("vec3\n%f %f %f\n", x, y, z); }
+  void show() const { std::printf("vec3\n%f %f %f\n", x, y, z); }
 
   // Swizzling
   vec2 xy() const { return vec2(x, y); }
@@ -43,7 +44,7 @@ struct mat2 {
   mat2(float m00 = 0.0f, float m01 = 0.0f, float m10 = 0.0f, float m11 = 0.0f)
       : m00(m00), m01(m01), m10(m10), m11(m11) {}
 
-  void show() const { printf("mat2\n%f %f\n%f %f\n", m00, m01, m10, m11); }
+  void show() const { std::printf("mat2\n%f %f\n%f %f\n", m00, m01, m10, m11); }
 };
 
 struct mat3 {
@@ -58,8 +59,8 @@ struct mat3 {
         m21(m21), m22(m22) {}
 
   void show() const {
-    printf("mat3\n%f %f %f\n%f %f %f\n%f %f %f\n", m00, m01, m02, m10, m11, m12,
-           m20, m21, m22);
+    std::printf("mat3\n%f %f %f\n%f %f %f\n%f %f %f\n", m00, m01, m02, m10, m11,
+                m12, m20, m21, m22);
   }
 };
 
@@ -78,9 +79,9 @@ struct mat4 {
         m32(m32), m33(m33) {}
 
   void show() const {
-    printf("mat4\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n", m00,
-           m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32,
-           m33);
+    std::printf("mat4\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n",
+                m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30,
+                m31, m32, m33);
   }
 };
 
@@ -111,7 +112,7 @@ mat4 operator*(const mat4 &a, float scalar);
 mat4 operator*(float scalar, const mat4 &a);
 
 vec2 operator*(const mat2 &m, const vec2 &v);
-vec2 operator*(const mat3 &m, const vec3 &v);
+vec3 operator*(const mat3 &m, const vec3 &v);
 vec3 operator*(const mat4 &m, const vec3 &v);
 
 float dot(const vec3 &a, const vec3 &b);
@@ -125,7 +126,12 @@ vec3 operator/(const vec3 &a, float scalar);
 // Multiply and re-scale (homogenous coordinates)
 vec3 operator>>(const mat4 &m, const vec3 &v);
 
+float length(vec2 a);
 float length(vec3 a);
+
+vec2 v_max(vec2 a, vec2 b);
+vec2 v_min(vec2 a, vec2 b);
+vec2 normalize(vec2 a);
 vec3 v_max(vec3 a, vec3 b);
 vec3 v_min(vec3 a, vec3 b);
 vec3 normalize(vec3 a);
@@ -146,6 +152,7 @@ float sdSmoothSubtraction(float d1, float d2, float k);
 vec3 lerp3(vec3 colorone, vec3 colortwo, float value);
 float lerp(float colorone, float colortwo, float value);
 float clamp(float value, float min, float max);
+vec3 reflect(const vec3 &incident, const vec3 &normal);
 float step(float a, float edge);
 float fixed_fmod(float a, float n);
 

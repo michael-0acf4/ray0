@@ -7,6 +7,10 @@
 #include <thread>
 #include <vector>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 #include "geom.hpp"
 
 #define PI 3.1415

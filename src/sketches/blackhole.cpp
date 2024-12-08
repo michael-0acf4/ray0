@@ -2,7 +2,7 @@
 
 constexpr float workerThreads = 4;
 
-const vec2 iResolution = {130, 80};
+const vec2 fResolution = {130, 80};
 
 constexpr float RS = .125;         // singularity radius
 constexpr float PS_RAD = 1.5 * RS; // photon sphere radius
@@ -69,7 +69,7 @@ inline float gridTexture(float x, float y) {
 }
 
 void blackholeShader(float &fragColor, const vec2 &fragCoord) {
-  const vec2 uv = (fragCoord - 0.5 * iResolution) / iResolution.y;
+  const vec2 uv = (fragCoord - 0.5 * fResolution) / fResolution.y;
 
   const vec3 camera(0., 0., 2.); // right above the screen
   const vec3 camDir = normalize(vec3(uv.x, uv.y, -1.));
@@ -128,7 +128,7 @@ void blackholeShader(float &fragColor, const vec2 &fragCoord) {
 }
 
 int main() {
-  Engine engine(iResolution);
+  Engine engine(fResolution);
 
   while (true) {
 

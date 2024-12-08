@@ -1,22 +1,22 @@
 #include "ray0.hpp"
 
-const vec2 iResolution = {25, 25};
+const vec2 fResolution = {25, 25};
 
 void shaderUVTest(float &fragColor, const vec2 &fragCoord) {
-  const vec2 uv = (fragCoord - 0.5 * iResolution) / iResolution.y;
+  const vec2 uv = (fragCoord - 0.5 * fResolution) / fResolution.y;
 
-  if (sqrt(uv.x * uv.x + uv.y * uv.y) < .4) {
-    float one = 0.25, two = 0.5, three = 0.75, four = 1.;
-    if (fragCoord.x > iResolution.x / 2) {
-      fragColor = fragCoord.y > iResolution.y / 2 ? one : two;
+  if (length(uv) < 0.4) {
+    float one = 0.25, two = 0.5, three = 0.75, four = 1;
+    if (fragCoord.x > fResolution.x / 2) {
+      fragColor = fragCoord.y > fResolution.y / 2 ? one : two;
     } else {
-      fragColor = fragCoord.y > iResolution.y / 2 ? three : four;
+      fragColor = fragCoord.y > fResolution.y / 2 ? three : four;
     }
   }
 }
 
 int main() {
-  Engine engine(iResolution);
+  Engine engine(fResolution);
   engine.update(shaderUVTest, 4);
   engine.render("3210 ");
 
