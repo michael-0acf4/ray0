@@ -14,23 +14,6 @@ constexpr float height = 35;
 // Sphere at (0, 0, 0)
 inline float sdTotalScene(vec3 p) { return length(p) - radius; }
 
-inline float rayMarch(vec3 camera, vec3 cam_dir) {
-  float distTraveled = minDepth;
-  int steps = 200;
-  while (steps > 0) {
-    vec3 currPos = add(camera, scaleReal(cam_dir, distTraveled));
-    float d = sdTotalScene(currPos);
-    distTraveled += d;
-
-    if (d < EPSILON || distTraveled > maxDepth)
-      break;
-
-    steps--;
-  }
-
-  return distTraveled;
-}
-
 void shader(float &fragColor, const vec2 &fragCoord) {
   const vec2 uv((fragCoord.x - 0.5 * width) / height,
                 (fragCoord.y - 0.5 * height) / height);
@@ -38,7 +21,7 @@ void shader(float &fragColor, const vec2 &fragCoord) {
   const vec3 camera(0., 0., 3.); // right above the screen
   const vec3 camDir = normalize({uv.x, uv.y, -1.});
 
-  float traveled = rayMarch(camera, camDir);
+  float traveled = rayMarch({minDepth, maxDepth}, camera, camDir, sdTotalScene);
   if (traveled <= maxDepth) {
     const vec3 contact = add(camera, scaleReal(camDir, traveled));
     const vec3 contactNormal = sceneNormalAt(contact, &sdTotalScene);

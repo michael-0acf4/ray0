@@ -12,14 +12,12 @@ constexpr float width = 130;
 constexpr float height = 80;
 constexpr float workerThreads = 4;
 
-// black hole configuration
 constexpr float RS = .125;         // singularity radius
 constexpr float PS_RAD = 1.5 * RS; // photon sphere radius
 constexpr float ACC_RAD = 3. * RS; // accretion disc radius
 
 float gtime = .1;
 
-// ray marching configuration
 constexpr float MAX_DEPTH = 100.;
 constexpr int MAX_STEPS = 300;
 constexpr float DP = 0.05;
@@ -33,31 +31,31 @@ inline float sdAccretionDisc(vec3 p) {
 }
 
 // Rough approximation of how light bends
-inline float interpSpaceDistortion(float sz_rad, float dist_singularity) {
-  const float distortion_factor = 2.79;
-  const float dist_ratio = sz_rad / dist_singularity;
-  return pow(dist_ratio, distortion_factor);
+inline float interpSpaceDistortion(float szwRad, float distSingularity) {
+  const float distortionFactor = 2.79;
+  const float distRatio = szwRad / distSingularity;
+  return pow(distRatio, distortionFactor);
 }
 
 vec3 bendLightDirection(vec3 blPos, vec3 rayPos, vec3 rayDir) {
-  // points at the current direction
   const vec3 u = normalize(rayDir);
-  // points at the singularity i.e. center of the black hole
+
+  // Points at the singularity i.e. center of the black hole
   // (u, v) angle is the maximum deviation angle starting from the current
   // unchanged light direction
   const vec3 v = normalize(sub(blPos, rayPos));
 
-  // in this setup we use v directly
+  // In this setup we use v directly
   // let's bend u in such a way that it follows v
   // also let's consider how close it is to bend it properly
-  float dist_how_close = length(sub(blPos, rayPos));
-  float lerp_val = interpSpaceDistortion(RS, dist_how_close);
+  float distHowClose = length(sub(blPos, rayPos));
+  float lerpVal = interpSpaceDistortion(RS, distHowClose);
 
-  return normalize(lerp3(u, v, lerp_val));
+  return normalize(lerp3(u, v, lerpVal));
 }
 
 inline float normalizedNoiseTexture(float x, float y) {
-  // noise-ish texture... a normalized chess board
+  // Noise-ish texture... a normalized chess board
   const int sx = (int)(x * 10.f);
   const int sy = (int)(y * 30.f);
   return (sx + sy) % 2 == 0 ? 0.3 : 1.;
@@ -90,7 +88,7 @@ void blackholeShader(float &fragColor, const vec2 &fragCoord) {
   vec3 rayDir = camDir;
 
   for (int i = 0; i < MAX_STEPS; i++) {
-    rayDir = bendLightDirection(blPos, rayPos, rayDir);
+    rayDir = bendLightDirection(blPos, rayPos, rayDir); // !
     rayPos = add(rayPos, scaleReal(rayDir, DP));
 
     float d = sdAccretionDisc(rayPos);
@@ -100,18 +98,18 @@ void blackholeShader(float &fragColor, const vec2 &fragCoord) {
       break;
   }
 
-  // base color
+  // Base color
   float diffuse = 0.;
 
-  // right after the photon sphere
+  // Right after the photon sphere
   if (length(vec3(uv.x, uv.y, 0.)) < PS_RAD)
     diffuse = 0.;
 
-  // construct the accretion disk and the photon sphere
+  // Construct the accretion disk and the photon sphere
   if (distTraveled < MAX_DEPTH) {
     const vec3 delta = sub(rayPos, blPos);
-    // make it glow more as it approaches the center
-    // create glow and diminish it with distance
+    // Make it glow more as it approaches the center
+    // and diminish it with distance
     float glow = .3 / std::pow(length(delta), 2.);
     glow = clamp(glow, 0., 1.); // remove artifacts
 
@@ -152,7 +150,6 @@ int main() {
 
     engine.restoreCursor();
 
-    // attempt 60fps
     using namespace std::literals::chrono_literals;
     std::this_thread::sleep_for(16ms);
   }

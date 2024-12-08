@@ -11,18 +11,16 @@
 
 constexpr float minDepth = 0;
 constexpr float maxDepth = 100;
-constexpr float width = 120;
-constexpr float height = 80;
+constexpr float width = 42;
+constexpr float height = 42;
 float gtime = 0;
 
 float sdTotalScene(vec3 p) {
   vec3 transfP = applyTransf(rotateY(-gtime), p);
-  transfP = applyTransf(rotateX(-gtime), transfP);
-  transfP = applyTransf(rotateZ(-gtime), transfP);
-  return sdDiff(sdUnion(sdSphere(transfP, 0.25),
-                        sdDiff(sdBox(transfP, vec3(0.8, 0.8, 0.8)),
-                               sdSphere(transfP, 1.))),
-                sdTorus(transfP, 1, 0.5));
+  transfP = applyTransf(rotateX(-gtime * 0.5), transfP);
+  transfP = applyTransf(rotateZ(-gtime * 0.25), transfP);
+
+  return sdTorus(transfP, 0.67, 0.3);
 }
 
 void shader(float &fragColor, const vec2 &fragCoord) {

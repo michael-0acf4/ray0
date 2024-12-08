@@ -109,7 +109,7 @@ float fixed_fmod(float a, float n) { return std::fmod(std::fmod(a, n) + n, n); }
 
 // The gradient at the contact point is orthogonal to surface
 // Approximating it is enough in practice..
-vec3 sceneNormalAt(vec3 p, float (*dist)(vec3)) {
+vec3 sceneNormalAt(vec3 p, const std::function<float(const vec3 &)> &dist) {
   const float x =
       dist({p.x + EPSILON, p.y, p.z}) - dist({p.x - EPSILON, p.y, p.z});
   const float y =
@@ -117,4 +117,23 @@ vec3 sceneNormalAt(vec3 p, float (*dist)(vec3)) {
   const float z =
       dist({p.x, p.y, p.z + EPSILON}) - dist({p.x, p.y, p.z - EPSILON});
   return normalize({x, y, z});
+}
+
+float rayMarch(std::pair<float, float> depth, const vec3 &camera,
+               const vec3 &camDir,
+               const std::function<float(const vec3 &)> &distanceFn) {
+  float distTraveled = depth.first;
+  int steps = 200;
+  while (steps > 0) {
+    vec3 currPos = add(camera, scaleReal(camDir, distTraveled));
+    float d = distanceFn(currPos);
+    distTraveled += d;
+
+    if (d < EPSILON || distTraveled > depth.second)
+      break;
+
+    steps--;
+  }
+
+  return distTraveled;
 }

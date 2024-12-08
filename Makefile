@@ -3,14 +3,26 @@ define compile_all
 	$(2)
 endef
 
-test:
+ifeq ($(OS),Windows_NT)
+	MKDIR_CMD = mkdir bin
+else
+	MKDIR_CMD = mkdir -p bin
+endif
+
+test: bin
 	$(call compile_all, src/sketches/test.cpp, ./bin/test)
 
-sphere:
+sphere: bin
 	$(call compile_all, src/sketches/sphere.cpp, ./bin/sphere)
 
-composition:
+composition: bin
 	$(call compile_all, src/sketches/scene-composition.cpp, ./bin/composition)
 
-blackhole:
+donut: bin
+	$(call compile_all, src/sketches/donut.cpp, ./bin/donut)
+
+blackhole: bin
 	$(call compile_all, src/sketches/blackhole.cpp, ./bin/blackhole)
+
+bin:
+	$(MKDIR_CMD)

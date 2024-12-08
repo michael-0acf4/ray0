@@ -72,6 +72,8 @@ void Engine::update(
     int endRow = i == workers - 1 ? height : startRow + rows;
 
     threads.emplace_back(taskSlice, startRow, endRow);
+    // std::thread t(taskSlice);
+    // threads.push_back(std::move(t));
   }
 
   for (auto &thread : threads) {

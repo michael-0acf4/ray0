@@ -3,6 +3,7 @@
 #include "geom.hpp"
 
 #include <cmath>
+#include <functional>
 #include <iostream>
 #include <utility>
 
@@ -68,4 +69,7 @@ float clamp(float value, float min, float max);
 float step(float a, float edge);
 float fixed_fmod(float a, float n);
 
-vec3 sceneNormalAt(vec3 p, float (*dist)(vec3));
+vec3 sceneNormalAt(vec3 p, const std::function<float(const vec3 &)> &dist);
+float rayMarch(std::pair<float, float> depth, const vec3 &camera,
+               const vec3 &camDir,
+               const std::function<float(const vec3 &)> &distanceFn);
