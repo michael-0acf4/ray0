@@ -1,5 +1,4 @@
-#include "engine.hpp"
-#include "geom.hpp"
+#include "ray0.hpp"
 
 constexpr float width = 70;
 constexpr float height = 10;

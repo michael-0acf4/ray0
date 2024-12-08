@@ -1,5 +1,4 @@
-#include "engine.hpp"
-#include "geom.hpp"
+#include "ray0.hpp"
 
 constexpr float minDepth = 0.;
 constexpr float maxDepth = 100.;
@@ -19,11 +18,11 @@ void shader(float &fragColor, const vec2 &fragCoord) {
 
   float traveled = rayMarch({minDepth, maxDepth}, camera, camDir, sdTotalScene);
   if (traveled <= maxDepth) {
-    const vec3 contact = add(camera, scaleReal(camDir, traveled));
+    const vec3 contact = camera + camDir * traveled;
     const vec3 contactNormal = sceneNormalAt(contact, &sdTotalScene);
     const vec3 lightPos(1., 1., 2.);
 
-    vec3 lightDir = normalize(sub(lightPos, contact));
+    vec3 lightDir = normalize(lightPos - contact);
 
     fragColor = std::fmin(dot(lightDir, contactNormal), 1.);
   }
