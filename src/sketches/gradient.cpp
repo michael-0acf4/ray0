@@ -1,7 +1,3 @@
-#include <cmath>
-#include <cstring>
-#include <iostream>
-
 #include "engine.hpp"
 #include "geom.hpp"
 

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <chrono>
 #include <cmath>
 #include <cstring>
 #include <functional>
@@ -14,8 +13,8 @@
 #define EPSILON 0.00001f
 #define BIG_EPSILON 0.01f
 
-extern const char *COLOR_STRONG;
-extern const char *COLOR_LIGHT;
+extern std::string COLOR_STRONG;
+extern std::string COLOR_LIGHT;
 
 class Engine {
 public:
@@ -25,7 +24,7 @@ public:
 
   void update(const std::function<void(float &, const vec2 &)> &fragmentShader,
               int workers = 1);
-  void render(const char *palette = COLOR_LIGHT) const;
+  void render(const std::string & = COLOR_LIGHT) const;
   void saveCursor();
   void restoreCursor();
   void clear();

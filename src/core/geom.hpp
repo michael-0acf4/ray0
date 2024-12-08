@@ -4,8 +4,6 @@
 
 #include <cmath>
 #include <functional>
-#include <iostream>
-#include <utility>
 
 #define PI 3.1415
 #define EPSILON 0.00001f

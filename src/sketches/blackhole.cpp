@@ -1,10 +1,3 @@
-#include <chrono>
-#include <cmath>
-#include <cstring>
-#include <ctime>
-#include <iostream>
-#include <thread>
-
 #include "engine.hpp"
 #include "geom.hpp"
 

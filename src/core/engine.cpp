@@ -1,11 +1,11 @@
 #include "engine.hpp"
 
-const char *COLOR_STRONG =
+std::string COLOR_STRONG =
     "@@@@@@@@@@%%%%%%%%#########*********++++++++===:::...  ";
-const char *COLOR_LIGHT = "******+++===----:::::::::::...... ";
+std::string COLOR_LIGHT = "******+++===----:::::::::::...... ";
 
-void Engine::render(const char *palette) const {
-  float len = strlen(palette);
+void Engine::render(const std::string &palette) const {
+  float len = palette.length();
   for (int i = 0; i < (int)height; i++) {
     for (int j = 0; j < (int)width; j++) {
       int index = clamp(len * (1 - fragments[i * width + j]), 0, len - 1);
