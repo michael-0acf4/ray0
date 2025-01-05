@@ -14,12 +14,11 @@ constexpr int MAX_STEPS = 300;
 constexpr float DP = 0.05;
 
 const float tiltAngle = std::sin((PI / 3.) * 3.2);
-const mat4 RX = rotateX(tiltAngle);
-const mat4 RZ = rotateZ(-tiltAngle);
+const mat4 RY = rotateZ(-tiltAngle);
 
 inline float sdAccretionDisc(vec3 p) {
-  p = RZ >> (RX >> p);
-  const float p1 = sdRoundedCylinder(p, ACC_RAD, ACC_RAD / 6, .001);
+  p = RY >> (rotateX(gtime / 50.) >> p);
+  const float p1 = sdRoundedCylinder(p, ACC_RAD, ACC_RAD / 8, .01);
   const float p2 = sdSphere(p, ACC_RAD);
   return sdSmoothSubtraction(p2, p1, .5);
 }
@@ -71,7 +70,7 @@ inline float gridTexture(float x, float y) {
 void blackholeShader(float &fragColor, const vec2 &fragCoord) {
   const vec2 uv = (fragCoord - 0.5 * fResolution) / fResolution.y;
 
-  const vec3 camera(0., 0., 2.); // right above the screen
+  const vec3 camera(0., 0., 1.8); // right above the screen
   const vec3 camDir = normalize(vec3(uv.x, uv.y, -1.));
 
   float distTraveled = 0.05;
@@ -94,10 +93,6 @@ void blackholeShader(float &fragColor, const vec2 &fragCoord) {
   // Base color
   float diffuse = 0.;
 
-  // Right after the photon sphere
-  if (length(vec3(uv.x, uv.y, 0.)) < PS_RAD)
-    diffuse = 0.;
-
   // Construct the accretion disk and the photon sphere
   if (distTraveled < MAX_DEPTH) {
     const vec3 delta = rayPos - blPos;
@@ -119,7 +114,7 @@ void blackholeShader(float &fragColor, const vec2 &fragCoord) {
   }
 
   // Background space deformation
-  if (length(vec3(uv.x, uv.y, 0.)) >= PS_RAD) {
+  if (length(uv) >= PS_RAD) {
     float backCol = gridTexture(rayPos.x / 5., rayPos.y / 5.);
     diffuse += clamp(backCol, 0., .2);
   }
