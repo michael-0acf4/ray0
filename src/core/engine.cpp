@@ -1,10 +1,10 @@
 #include "engine.hpp"
 
-std::string COLOR_STRONG =
+std::string_view COLOR_STRONG =
     "@@@@@@@@@@%%%%%%%%#########*********++++++++===:::...  ";
-std::string COLOR_LIGHT = "******+++===----:::::::::::...... ";
+std::string_view COLOR_LIGHT = "******+++===----:::::::::::...... ";
 
-void Engine::render(const std::string &palette) const {
+void Engine::render(const std::string_view &palette) const {
   float len = palette.length();
   for (int i = 0; i < (int)height; i++) {
     for (int j = 0; j < (int)width; j++) {

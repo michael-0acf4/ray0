@@ -1,5 +1,5 @@
 define compile_all
-	g++ -std=c++14 -O4 -Isrc/core $(1) -o$(2) src/core/engine.cpp src/core/geom.cpp
+	g++ -std=c++17 -O4 -Isrc/core $(1) -o$(2) src/core/engine.cpp src/core/geom.cpp
 	$(2)
 endef
 
