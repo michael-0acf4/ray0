@@ -27,5 +27,8 @@ gradient: bin
 blackhole: bin
 	$(call compile_all, src/sketches/blackhole.cpp, ./bin/blackhole)
 
+plasma238: bin
+	$(call compile_all, src/sketches/plasma238.cpp, ./bin/plasma238)
+
 bin:
 	$(MKDIR_CMD)

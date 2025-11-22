@@ -55,6 +55,14 @@ vec3 operator-(const vec3 &a, const vec3 &b) {
 
 // Mult
 
+vec2 operator*(const vec2 &a, const vec2 &b) {
+  return vec2(a.x * b.x, a.y * b.y);
+}
+
+vec3 operator*(const vec3 &a, const vec3 &b) {
+  return vec3(a.x * b.x, a.y * b.y, a.z * b.z);
+}
+
 vec2 operator*(const vec2 &a, float scalar) {
   return vec2(a.x * scalar, a.y * scalar);
 }
@@ -197,6 +205,30 @@ vec2 v_max(vec2 a, vec2 b) {
 vec2 v_min(vec2 a, vec2 b) {
   return vec2(std::min(a.x, b.x), std::min(a.y, b.y));
 }
+
+vec2 v_sin(const vec2 &a) { return vec2(sin(a.x), sin(a.y)); }
+
+vec3 v_sin(const vec3 &a) { return vec3(sin(a.x), sin(a.y), sin(a.z)); }
+
+vec2 v_cos(const vec2 &a) { return vec2(cos(a.x), cos(a.y)); }
+
+vec3 v_cos(const vec3 &a) { return vec3(cos(a.x), cos(a.y), cos(a.z)); }
+
+vec2 v_tan(const vec2 &a) { return vec2(tan(a.x), tan(a.y)); }
+
+vec3 v_tan(const vec3 &a) { return vec3(tan(a.x), tan(a.y), tan(a.z)); }
+
+vec2 v_tanh(const vec2 &a) { return vec2(tanh(a.x), tanh(a.y)); }
+
+vec3 v_tanh(const vec3 &a) { return vec3(tanh(a.x), tanh(a.y), tanh(a.z)); }
+
+vec2 v_exp(const vec2 &a) { return vec2(exp(a.x), exp(a.y)); }
+
+vec3 v_exp(const vec3 &a) { return vec3(exp(a.x), exp(a.y), exp(a.z)); }
+
+vec2 v_log(const vec2 &a) { return vec2(log(a.x), log(a.y)); }
+
+vec3 v_log(const vec3 &a) { return vec3(log(a.x), log(a.y), log(a.z)); }
 
 vec2 normalize(vec2 a) {
   const float L = length(a);
